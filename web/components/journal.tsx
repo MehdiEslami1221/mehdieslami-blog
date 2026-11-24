@@ -45,6 +45,13 @@ export function Journal({ posts, lang }: { posts: Post[]; lang: Lang }) {
   );
   return (
     <>
+      {posts.some((post) => post.language !== lang) && (
+        <p className="language-note">
+          {fa
+            ? "نوشته‌ها به زبان اصلی نمایش داده می‌شوند."
+            : "Posts are shown in their original language."}
+        </p>
+      )}
       <div className="journal-toolbar">
         <label className="search-field">
           <Icon name="search" width="18" />
@@ -123,12 +130,31 @@ export function Journal({ posts, lang }: { posts: Post[]; lang: Lang }) {
               <div className="post-info">
                 <div className="post-category">
                   <span>{categoryLabel(post, lang)}</span>
+                  {post.language !== lang && (
+                    <span
+                      className="post-language"
+                      lang={post.language}
+                      dir={post.language === "fa" ? "rtl" : "ltr"}
+                    >
+                      {post.language === "fa" ? "فارسی" : "English"}
+                    </span>
+                  )}
                   {i === 0 && !query && category === "all" && (
                     <small>{fa ? "تازه‌ترین" : "LATEST NOTE"}</small>
                   )}
                 </div>
-                <h3>{post.title}</h3>
-                <p>{post.excerpt}</p>
+                <h3
+                  lang={post.language}
+                  dir={post.language === "fa" ? "rtl" : "ltr"}
+                >
+                  {post.title}
+                </h3>
+                <p
+                  lang={post.language}
+                  dir={post.language === "fa" ? "rtl" : "ltr"}
+                >
+                  {post.excerpt}
+                </p>
                 <div className="post-meta">
                   <time dateTime={post.publishedAt}>
                     {dateLabel(post.publishedAt, lang)}

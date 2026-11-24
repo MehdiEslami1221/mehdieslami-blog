@@ -89,3 +89,7 @@ Standard Actions runners are free for public repositories; the CMS also has fini
 The ME monogram, portrait and social cover are the owner's existing portfolio assets. The IRANSansX fonts are owner-supplied commercial fonts, not open-source font files; their applicable license remains the owner's responsibility. No stock image or generated article is represented as an actual project or publication.
 
 See [README.fa.md](README.fa.md) for the Persian guide and [AGENTS.md](AGENTS.md) for maintenance boundaries.
+
+## Original-language posts and portfolio feed
+
+Both journal interfaces show untranslated posts in their original language, with a language label and native text direction. Published linked translations replace duplicate cards in the preferred interface language. The export also writes `latest-posts.json` for the portfolio, containing up to four latest entries per interface, public metadata only. The portfolio reads it after each blog deployment without its own rebuild. RSS remains separated by article language.

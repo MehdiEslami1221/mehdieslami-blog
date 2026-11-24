@@ -1,5 +1,6 @@
 import { readFile, writeFile, mkdir, rm } from "node:fs/promises";
 import { rss, postPath, escapeXML } from "./content-core.mjs";
+import { postListing } from "../web/lib/post-list.mjs";
 for (const path of ["web/out/posts/_empty", "web/out/en/posts/_empty"])
   await rm(path, { recursive: true, force: true });
 const { posts } = JSON.parse(
@@ -49,6 +50,27 @@ await writeFile(
   `User-agent: *\nAllow: /\nSitemap: ${base}/sitemap.xml\n`,
 );
 await writeFile("web/out/.nojekyll", "");
+// Small public snapshot for the portfolio; no CMS credentials or article bodies.
+const latest = {};
+for (const lang of ["fa", "en"]) {
+  latest[lang] = postListing(posts, lang)
+    .slice(0, 4)
+    .map((post) => ({
+      id: post._id,
+      title: post.title,
+      excerpt: post.excerpt,
+      language: post.language,
+      url: base + postPath(post),
+      publishedAt: post.publishedAt,
+      readingMinutes: post.readingMinutes,
+      category: post.category,
+      image: post.cover,
+    }));
+}
+await writeFile(
+  "web/out/latest-posts.json",
+  JSON.stringify({ version: 1, posts: latest }) + "\n",
+);
 // A CNAME is emitted only after the owner configures a custom domain.
 if (process.env.BLOG_CUSTOM_DOMAIN)
   await writeFile(

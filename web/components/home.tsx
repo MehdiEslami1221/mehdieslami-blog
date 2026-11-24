@@ -1,9 +1,15 @@
-import { byLanguage, asset, siteURL, homePath, type Lang } from "@/lib/content";
+import {
+  listedPosts,
+  asset,
+  siteURL,
+  homePath,
+  type Lang,
+} from "@/lib/content";
 import { Journal } from "./journal";
 import { Icon } from "./icons";
 export function Home({ lang }: { lang: Lang }) {
   const fa = lang === "fa",
-    posts = byLanguage(lang);
+    posts = listedPosts(lang);
   const schema = {
     "@context": "https://schema.org",
     "@type": "Blog",

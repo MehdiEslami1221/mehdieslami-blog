@@ -1,4 +1,5 @@
 import data from "./generated/content.json";
+import { postListing } from "./post-list.mjs";
 export type Lang = "fa" | "en";
 export type Block = {
   _key?: string;
@@ -43,6 +44,7 @@ export const articlePath = (post: Pick<Post, "language" | "slug">) =>
   `${post.language === "en" ? "/en" : ""}/posts/${encodeURIComponent(post.slug)}/`;
 export const byLanguage = (lang: Lang) =>
   posts.filter((p) => p.language === lang);
+export const listedPosts = (lang: Lang) => postListing(posts, lang);
 export const dateLabel = (date: string, lang: Lang) =>
   new Intl.DateTimeFormat(lang === "fa" ? "fa-IR" : "en-GB", {
     year: "numeric",
