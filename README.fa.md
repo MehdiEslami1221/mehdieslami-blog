@@ -21,7 +21,7 @@ npm run studio:dev
 
 ## انتشار سایت
 
-در تنظیمات مخزن، **Pages → Source** را روی **GitHub Actions** قرار دهید. سپس از **Actions → Publish blog → Run workflow** انتشار را اجرا کنید. آدرس موقت در نتیجهٔ همان اجرا نمایش داده می‌شود.
+در تنظیمات مخزن، **Pages → Source** را روی **GitHub Actions** قرار دهید. سپس [صفحهٔ اجرای انتشار](https://github.com/MehdiEslami1221/mehdieslami-blog/actions/workflows/pages.yml) را باز کنید و از بالای فهرست اجراها، **Run workflow** را بزنید. شاخهٔ `main` را انتخاب کنید و دکمهٔ سبز **Run workflow** را بزنید. این صفحه در تب **Actions بالای مخزن** قرار دارد؛ منوی Actions داخل Settings صفحهٔ دیگری است. آدرس سایت در نتیجهٔ اجرای موفق نمایش داده می‌شود.
 
 بعد از آماده‌شدن سایت، دامنهٔ `blog.mehdieslami.ir` را ابتدا در بخش **Custom domain** گیت‌هاب ثبت کنید؛ سپس در Cloudflare رکورد زیر را بسازید:
 
