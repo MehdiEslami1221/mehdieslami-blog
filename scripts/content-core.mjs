@@ -76,12 +76,36 @@ export function normalizePosts(input, now = Date.now()) {
         ...p,
         title: p.title.trim(),
         excerpt: String(p.excerpt || "").slice(0, 400),
+        // GROQ projects missing optional fields as null. Keep the generated
+        // content contract consistent for posts with and without those fields.
+        featured: p.featured === true,
+        seoTitle: typeof p.seoTitle === "string" ? p.seoTitle : undefined,
+        seoDescription:
+          typeof p.seoDescription === "string" ? p.seoDescription : undefined,
+        translation:
+          p.translation &&
+          ["fa", "en"].includes(p.translation.language) &&
+          validSlug(p.translation.slug)
+            ? p.translation
+            : undefined,
+        body: p.body.map((block) => ({
+          ...block,
+          asset:
+            block.asset && imageURL(block.asset.url) ? block.asset : undefined,
+        })),
         tags: Array.isArray(p.tags)
           ? p.tags.filter((t) => typeof t === "string").slice(0, 8)
           : [],
         cover:
           p.cover && imageURL(p.cover.url)
-            ? { ...p.cover, url: imageURL(p.cover.url) }
+            ? {
+                url: imageURL(p.cover.url),
+                alt: typeof p.cover.alt === "string" ? p.cover.alt : "",
+                caption:
+                  typeof p.cover.caption === "string"
+                    ? p.cover.caption
+                    : undefined,
+              }
             : undefined,
         category,
         readingMinutes: readingMinutes(p.body),

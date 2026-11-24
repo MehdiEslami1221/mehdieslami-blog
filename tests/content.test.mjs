@@ -109,3 +109,41 @@ test("RSS preserves Unicode, escapes XML and includes only its own language with
   assert.match(result, /https:\/\/example.com\/blog\/en\/posts\/a-b\//);
   assert.doesNotMatch(result, /%D9%81/);
 });
+
+test("A published Sanity post with null optional projections still produces readable content and a feed entry", () => {
+  const image = "https://cdn.sanity.io/images/project/production/cover.webp";
+  const input = post({
+    featured: null,
+    seoTitle: null,
+    seoDescription: null,
+    translation: null,
+    cover: { url: image, alt: "Issue form", caption: null },
+    body: [
+      {
+        _type: "block",
+        _key: "text",
+        asset: null,
+        children: [{ _type: "span", text: "Published article" }],
+      },
+      {
+        _type: "image",
+        _key: "image",
+        asset: { url: image },
+        alt: "Issue form",
+      },
+    ],
+  });
+  const [article] = JSON.parse(JSON.stringify(normalizePosts([input])));
+  assert.equal(article.title, input.title);
+  assert.equal(article.body[0].children[0].text, "Published article");
+  assert.equal(article.body[1].asset.url, image);
+  assert.equal(article.cover.url, image);
+  assert.equal(article.cover.alt, "Issue form");
+  assert.equal(article.readingMinutes, 1);
+  assert.equal(article.featured, false);
+  for (const key of ["seoTitle", "seoDescription", "translation"])
+    assert.equal(key in article, false);
+  assert.equal("asset" in article.body[0], false);
+  assert.equal("caption" in article.cover, false);
+  assert.match(rss([article], "https://example.com", "en"), /<item>/);
+});
