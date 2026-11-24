@@ -1,0 +1,11 @@
+node_modules/
+.next/
+out/
+dist/
+.sanity/
+.env
+.env.*
+!.env.example
+*.tsbuildinfo
+web/lib/generated/content.json
+.DS_Store

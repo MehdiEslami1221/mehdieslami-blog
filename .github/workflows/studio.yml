@@ -1,0 +1,29 @@
+name: Deploy Sanity Studio
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ["studio/**", "package-lock.json", ".github/workflows/studio.yml"]
+permissions:
+  contents: read
+jobs:
+  studio:
+    runs-on: ubuntu-latest
+    env:
+      SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+      SANITY_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - name: Check deployment access
+        run: |
+          if [ -z "$SANITY_AUTH_TOKEN" ]; then
+            echo 'Studio source is ready. Add the SANITY_AUTH_TOKEN repository secret to deploy the editor.' >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - if: env.SANITY_AUTH_TOKEN != ''
+        run: npm ci --no-audit --no-fund
+      - if: env.SANITY_AUTH_TOKEN != ''
+        run: npm run studio:deploy

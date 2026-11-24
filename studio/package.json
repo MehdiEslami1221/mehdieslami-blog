@@ -1,0 +1,23 @@
+{
+  "name": "@mehdi/blog-studio",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "sanity dev",
+    "build": "sanity build",
+    "deploy": "sanity deploy --url mehdi-eslami-blog --yes",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "sanity": "6.24.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "styled-components": "6.6.0"
+  },
+  "devDependencies": {
+    "typescript": "7.0.2",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0"
+  }
+}
