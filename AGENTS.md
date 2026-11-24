@@ -1,6 +1,6 @@
 # Maintaining Mehdi Eslami's journal
 
-Read both READMEs and docs/PUBLISHING.md. This is the independent blog for blog.mehdieslami.ir, with Next.js/TypeScript static exports on GitHub Pages and Sanity project kaaepoyb, public production dataset. The owner's portfolio lives in a separate repository and must not be changed by blog maintenance.
+Read both READMEs, docs/MAINTENANCE.md and docs/PUBLISHING.md. This is the independent blog for blog.mehdieslami.ir, with Next.js/TypeScript static exports on GitHub Pages and Sanity project kaaepoyb, public production dataset. The owner's portfolio lives in a separate repository and must not be changed by blog maintenance.
 
 Preserve the charcoal/lime ME identity, real supplied portrait, commercial owner-supplied IRANSansX fonts, Persian/English layouts and native reading direction. Persian copy uses fluent standard written Persian and respectful plural address. Do not publish sample posts, fake reading statistics, fabricated author history or placeholder customer claims.
 
@@ -8,7 +8,7 @@ web/ owns the reading website; studio/ owns the editorial schema. Public content
 
 Keep the website statically exportable. Do not add server-only routes, cookies, runtime ISR, a paid API, analytics, newsletter submission or visitor accounts without a scope change. Every real article needs a generated HTML route, canonical, honest metadata and sitemap/RSS entry. The _empty build parameter exists only because Next static export requires one parameter for empty collections; it renders notFound and finish-export removes its directories. It must never become a public sample article or feed entry.
 
-The Pages workflow owns base URL/base path. Test both a project path and a custom-domain root. Public asset URLs, local fonts, article links, 404s, feeds and metadata must agree. The root is Persian; /en/ is English. The interface switch goes to the other homepage, while published translated-article references provide reciprocal article SEO. Content is not automatically translated.
+The Pages workflow owns base URL/base path. Test both a project path and a custom-domain root. Public asset URLs, local fonts, article links, 404s, feeds and metadata must agree. The root is Persian; /en/ is English. The interface switch goes to the other homepage. Article alternate-language metadata follows each post's own published translation reference; link both documents for reciprocal SEO. Listing deduplication also supports one-way links. Content is not automatically translated.
 
 The Sanity Studio is a separate deployment. A missing SANITY_AUTH_TOKEN must not be reported as a successful editor deployment. The chosen hostname is not a verified URL until deployment succeeds. Post date filtering is not Sanity's paid scheduled-draft feature. Keep publication, update, unpublish/delete and webhook/token setup accurate in the docs. Hourly GitHub schedules are fallback only; they may be delayed or disabled after inactivity.
 
@@ -19,3 +19,5 @@ Homepage lists include original-language posts when a published translation is u
 `finish-export.mjs` also emits public `latest-posts.json` (version 1), with up to four posts per interface language and no full article bodies or credentials. The portfolio reads that snapshot; maintain its URL and field contract. Entries keep original article routes, language, date and public cover metadata.
 
 Article sharing belongs in the normal-flow `.article-actions` at the end of the body, beside the return link. Never pin the share button or its status over the footer. Keep the clipboard-denied URL fallback readable in either direction. The hero notebook and page ambience use decorative CSS transform/opacity animations, with no runtime animation library; preserve the existing reduced-motion override and static print output.
+
+Reactions, comments, visitor accounts and a custom editor are outside the current implementation. No Cloudflare Worker, D1 database or voting API has been provisioned for reactions. Do not treat a design proposal as a deployed feature. Keep docs/MAINTENANCE.md aligned with code and distinguish repository behavior from external settings that have not been verified.

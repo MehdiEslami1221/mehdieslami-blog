@@ -2,10 +2,25 @@
 
 A Persian / English software journal, with a Next.js static frontend on GitHub Pages and a separate Sanity Studio. The layout shares the charcoal, lime, monogram, portrait and Persian typography of [mehdieslami.ir](https://mehdieslami.ir/).
 
+[Live journal](https://blog.mehdieslami.ir/) · [English journal](https://blog.mehdieslami.ir/en/) · [Persian guide](README.fa.md) · [Maintenance guide](docs/MAINTENANCE.md) · [Publishing](docs/PUBLISHING.md)
+
 - **Sanity project:** `kaaepoyb`
 - **Dataset:** `production` (public, published articles only)
-- **Intended domain:** `blog.mehdieslami.ir`
+- **Website:** `blog.mehdieslami.ir`
 - **Stack:** Next.js 16, React 19, TypeScript, Sanity Studio 6
+
+## Current features
+
+- Persian and English homepages, with a static HTML page for every published article.
+- Search across titles, excerpts, tags and category names, plus category filters.
+- Linked translations, with original-language posts retained when a translation is unavailable.
+- Portable Text articles, code blocks, images, tags, reading estimates and a heading-based table of contents.
+- Reading progress and an inline copy-link action at the end of each article.
+- An animated notebook illustration and a subtle moving background, respecting reduced motion.
+- Article metadata, structured data, sitemap, robots file and separate Persian/English RSS feeds.
+- A public snapshot supplying the portfolio's four most recent posts.
+
+Comments, reactions, visitor accounts and a custom publishing dashboard are not implemented. Sanity Studio remains the editor. See the [maintenance guide](docs/MAINTENANCE.md) before changing layout, routes, publication or the portfolio integration.
 
 ## Local development
 
@@ -39,7 +54,7 @@ The DNS record alone does not configure the GitHub domain. Verify the domain in 
 
 ## Deploy the editing panel
 
-The editor must be deployed once before the owner can write articles from a phone. Its source is already configured for this project. The intended hostname `mehdi-eslami-blog.sanity.studio` is confirmed only after a successful deployment.
+The editing panel is hosted at [mehdi-eslami-blog.sanity.studio](https://mehdi-eslami-blog.sanity.studio/). Sign in with an authorized Sanity account. Writing posts does not require redeploying Studio; redeploy it when its schema or configuration changes. The commands below are for initial setup or redeployment.
 
 Choose one method:
 
@@ -58,7 +73,7 @@ If the hosted editor reports an origin error, add its actual `https://…sanity.
 
 ## Write and publish
 
-Create any categories first, then a **Post**. Choose Persian or English, enter the title, generate a unique slug, write the excerpt and body, and optionally add a cover image, tags, code blocks and SEO text. Cover and inline images require alt text. Publish when ready. The language switch changes the interface/homepage; it does not translate articles automatically. An optional translated-post reference adds reciprocal article language metadata when that other article is also published.
+Create any categories first, then a **Post**. Choose Persian or English, enter the title, generate a unique slug, write the excerpt and body, and optionally add a cover image, tags, code blocks and SEO text. Cover and inline images require alt text. Publish when ready. The language switch changes the interface/homepage; it does not translate articles automatically. For a bilingual article, create two posts and link their `translation` fields in both directions for reciprocal article language metadata. The target must also be published and eligible for the build. Listing deduplication supports one-way references too.
 
 The date field labels the article and filters future dates at build time. It does not enable Sanity's paid scheduled-draft feature. Published articles dated in the future become eligible at the next build after that date. Slugs are public addresses: keep them stable after publishing.
 
