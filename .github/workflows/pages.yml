@@ -17,6 +17,8 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      artifact_name: ${{ steps.artifact-name.outputs.name }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -41,8 +43,12 @@ jobs:
           BLOG_BASE_PATH: ${{ steps.pages.outputs.base_path }}
           BLOG_SITE_URL: ${{ steps.pages.outputs.base_url }}
           NEXT_TELEMETRY_DISABLED: "1"
+      - name: Name deployment artifact
+        id: artifact-name
+        run: echo "name=github-pages-${{ github.run_id }}-${{ github.run_attempt }}" >> "$GITHUB_OUTPUT"
       - uses: actions/upload-pages-artifact@v3
         with:
+          name: ${{ steps.artifact-name.outputs.name }}
           path: web/out
           retention-days: 1
   deploy:
@@ -55,3 +61,5 @@ jobs:
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          artifact_name: ${{ needs.build.outputs.artifact_name }}
