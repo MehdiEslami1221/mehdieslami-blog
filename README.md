@@ -93,3 +93,5 @@ See [README.fa.md](README.fa.md) for the Persian guide and [AGENTS.md](AGENTS.md
 ## Original-language posts and portfolio feed
 
 Both journal interfaces show untranslated posts in their original language, with a language label and native text direction. Published linked translations replace duplicate cards in the preferred interface language. The export also writes `latest-posts.json` for the portfolio, containing up to four latest entries per interface, public metadata only. The portfolio reads it after each blog deployment without its own rebuild. RSS remains separated by article language.
+
+The notebook illustration and background have subtle CSS motion that respects the system's reduced-motion preference. The article copy-link action sits beside the return link at the end of each article, with an inline status or copyable URL when clipboard access is unavailable, so it cannot cover footer links.

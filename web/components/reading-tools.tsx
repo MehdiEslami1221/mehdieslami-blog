@@ -1,9 +1,8 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import type { Lang } from "@/lib/content";
-export function ReadingTools({ lang }: { lang: Lang }) {
-  const progress = useRef<HTMLDivElement>(null),
-    [message, setMessage] = useState("");
+export function ReadingTools() {
+  const progress = useRef<HTMLDivElement>(null);
   useEffect(() => {
     let frame = 0;
     const update = () => {
@@ -25,6 +24,14 @@ export function ReadingTools({ lang }: { lang: Lang }) {
       cancelAnimationFrame(frame);
     };
   }, []);
+  return (
+    <div className="reading-progress" aria-hidden="true">
+      <div ref={progress} />
+    </div>
+  );
+}
+export function ArticleShare({ lang }: { lang: Lang }) {
+  const [message, setMessage] = useState("");
   async function copy() {
     try {
       await navigator.clipboard.writeText(location.href);
@@ -34,16 +41,13 @@ export function ReadingTools({ lang }: { lang: Lang }) {
     }
   }
   return (
-    <>
-      <div className="reading-progress" aria-hidden="true">
-        <div ref={progress} />
-      </div>
+    <div className="article-share">
       <button className="share-article" type="button" onClick={copy}>
         {lang === "fa" ? "کپی پیوند نوشته" : "Copy article link"}
       </button>
-      <span className="share-status" role="status">
+      <span className="share-status" role="status" dir="auto">
         {message}
       </span>
-    </>
+    </div>
   );
 }

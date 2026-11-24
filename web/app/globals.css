@@ -16,6 +16,9 @@ html {
 }
 body {
   margin: 0;
+  position: relative;
+  isolation: isolate;
+  min-height: 100svh;
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-persian), Arial, sans-serif;
@@ -102,7 +105,7 @@ svg {
   top: 12px;
 }
 .ambient {
-  position: absolute;
+  position: fixed;
   inset: 0;
   pointer-events: none;
   overflow: hidden;
@@ -110,6 +113,15 @@ svg {
   background:
     radial-gradient(ellipse 60% 28% at 80% 10%, #bdf66a08, transparent),
     radial-gradient(ellipse 50% 25% at 0% 65%, #7bc57106, transparent);
+}
+.ambient:before {
+  content: "";
+  position: absolute;
+  inset: -15%;
+  background:
+    radial-gradient(ellipse 40% 35% at 20% 25%, #91d84c10, transparent 75%),
+    radial-gradient(ellipse 35% 40% at 80% 65%, #6cd4ac0b, transparent 75%);
+  animation: ambient-drift 28s ease-in-out infinite alternate;
 }
 .ambient:after {
   content: "";
@@ -266,7 +278,7 @@ html[dir="rtl"] .hero-link svg,
 html[dir="rtl"] .post-meta > svg,
 html[dir="rtl"] .text-action svg,
 html[dir="rtl"] .author-card > a svg,
-html[dir="rtl"] .article-end > a svg {
+html[dir="rtl"] .article-actions > a svg {
   transform: scaleX(-1);
 }
 .hero-topics {
@@ -285,6 +297,7 @@ html[dir="rtl"] .article-end > a svg {
 .notebook-art {
   height: 365px;
   position: relative;
+  isolation: isolate;
   border: 1px solid #d8f3bf26;
   border-radius: 18px;
   background:
@@ -297,12 +310,22 @@ html[dir="rtl"] .article-end > a svg {
 .notebook-art:before {
   content: "";
   position: absolute;
-  inset: 0;
+  inset: -32px;
   background-image:
     linear-gradient(#cde9b507 1px, transparent 1px),
     linear-gradient(90deg, #cde9b507 1px, transparent 1px);
   background-size: 32px 32px;
   mask-image: radial-gradient(black, transparent 85%);
+  animation: art-grid-drift 16s linear infinite;
+  z-index: -1;
+}
+.notebook-art:after {
+  content: "";
+  position: absolute;
+  inset: -25%;
+  background: radial-gradient(ellipse at 45% 45%, #bdf66a18, transparent 55%);
+  animation: art-aura 12s ease-in-out infinite alternate;
+  z-index: -1;
 }
 .art-corner {
   position: absolute;
@@ -319,20 +342,40 @@ html[dir="rtl"] .article-end > a svg {
   border: 1px solid #bdf66a18;
   border-radius: 50%;
   transform: translate(-50%, -50%);
+  animation: art-orbit 40s linear infinite;
+}
+.orbit:after {
+  content: "";
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #bdf66aaa;
+  box-shadow: 0 0 10px #bdf66a60;
 }
 .orbit-one {
   width: 110px;
   height: 110px;
   border-style: dashed;
+  animation-duration: 32s;
+}
+.orbit-one:after {
+  display: none;
 }
 .orbit-two {
   width: 210px;
   height: 210px;
+  animation-direction: reverse;
+  animation-delay: -12s;
 }
 .orbit-three {
   width: 310px;
   height: 310px;
   border-color: #bdf66a0c;
+  animation-duration: 64s;
+  animation-delay: -30s;
 }
 .art-core {
   position: absolute;
@@ -341,7 +384,11 @@ html[dir="rtl"] .article-end > a svg {
   transform: translate(-50%, -50%);
   color: var(--accent);
 }
+.art-core > svg {
+  animation: art-book-float 6s ease-in-out infinite;
+}
 .orbit-code {
+  --code-angle: 0deg;
   position: absolute;
   display: grid;
   place-items: center;
@@ -352,16 +399,21 @@ html[dir="rtl"] .article-end > a svg {
   font: 20px/1 monospace;
   width: 52px;
   height: 48px;
+  animation: art-code-float 7s ease-in-out infinite;
 }
 .code-one {
+  --code-angle: 9deg;
   top: 57px;
   right: 69px;
   transform: rotate(9deg);
 }
 .code-two {
+  --code-angle: -10deg;
   bottom: 100px;
   left: 52px;
   transform: rotate(-10deg);
+  animation-delay: -3s;
+  animation-duration: 8s;
 }
 .code-three {
   top: 138px;
@@ -370,6 +422,8 @@ html[dir="rtl"] .article-end > a svg {
   width: 40px;
   height: 40px;
   opacity: 0.55;
+  animation-delay: -5s;
+  animation-duration: 9s;
 }
 .art-caption {
   position: absolute;
@@ -403,6 +457,64 @@ html[dir="rtl"] .article-end > a svg {
   width: 4px;
   background: var(--accent);
   border-radius: 50%;
+  animation: art-signal 4s ease-in-out infinite;
+}
+@keyframes ambient-drift {
+  from {
+    transform: translate3d(-3%, -2%, 0) rotate(-4deg);
+  }
+  to {
+    transform: translate3d(3%, 3%, 0) rotate(4deg);
+  }
+}
+@keyframes art-grid-drift {
+  to {
+    transform: translate3d(32px, 32px, 0);
+  }
+}
+@keyframes art-aura {
+  from {
+    transform: translate3d(-5%, -3%, 0) scale(0.9);
+    opacity: 0.5;
+  }
+  to {
+    transform: translate3d(7%, 5%, 0) scale(1.1);
+    opacity: 0.9;
+  }
+}
+@keyframes art-orbit {
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+@keyframes art-book-float {
+  0%,
+  100% {
+    transform: translateY(3px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+@keyframes art-code-float {
+  0%,
+  100% {
+    transform: translateY(3px) rotate(var(--code-angle));
+  }
+  50% {
+    transform: translateY(-7px) rotate(calc(var(--code-angle) + 3deg));
+  }
+}
+@keyframes art-signal {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(0.85);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.25);
+  }
 }
 .journal-layout {
   display: grid;
@@ -661,6 +773,7 @@ html[dir="rtl"] .article-end > a svg {
   align-items: center;
   justify-content: space-between;
   gap: 22px;
+  flex-wrap: wrap;
 }
 .footer-brand {
   display: flex;
@@ -672,6 +785,7 @@ html[dir="rtl"] .article-end > a svg {
 .footer-top > div {
   display: flex;
   gap: 22px;
+  flex-wrap: wrap;
 }
 .footer-top > div > a {
   display: flex;
@@ -1010,12 +1124,29 @@ html[dir="rtl"] .article-end > a svg {
 .article-end > p {
   font-size: 16px;
 }
-.article-end > a {
+.article-actions {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 18px 24px;
+  margin-top: 24px;
+}
+.article-actions > a {
   display: inline-flex;
   align-items: center;
   gap: 15px;
   font-size: 14px;
   text-decoration: none;
+  min-height: 44px;
+}
+.article-share {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+  max-width: 100%;
+  gap: 8px;
 }
 .article-toc {
   position: sticky;
@@ -1075,10 +1206,6 @@ html[dir="rtl"] .reading-progress > div {
   transform-origin: right;
 }
 .share-article {
-  position: fixed;
-  bottom: 22px;
-  inset-inline-end: 25px;
-  z-index: 20;
   min-height: 44px;
   border: 1px solid #bdf66a40;
   border-radius: 100px;
@@ -1086,17 +1213,23 @@ html[dir="rtl"] .reading-progress > div {
   background: #111b11ed;
   color: #b4d197;
   font-size: 12px;
+  transition:
+    border-color 0.2s,
+    background-color 0.2s;
+}
+.share-article:hover {
+  border-color: #bdf66a90;
+  background: #192617;
 }
 .share-status {
-  position: fixed;
-  bottom: 80px;
-  inset-inline-end: 25px;
-  z-index: 20;
   font-size: 12px;
   color: var(--accent);
-  max-width: 280px;
+  max-width: min(320px, 100%);
   overflow-wrap: anywhere;
-  background: #0b120d;
+  line-height: 1.8;
+}
+.share-status:empty {
+  display: none;
 }
 .not-found {
   min-height: 85vh;
@@ -1518,8 +1651,6 @@ html[dir="rtl"] .reading-progress > div {
     padding: 16px;
   }
   .share-article {
-    inset-inline-end: 16px;
-    bottom: 16px;
     font-size: 11px;
   }
   .not-found h1 {
@@ -1541,6 +1672,7 @@ html[dir="rtl"] .reading-progress > div {
   }
 }
 @media print {
+  .ambient,
   .site-header,
   .site-footer,
   .article-toc,

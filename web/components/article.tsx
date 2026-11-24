@@ -16,7 +16,7 @@ import {
   type Lang,
 } from "@/lib/content";
 import { Icon } from "./icons";
-import { ReadingTools } from "./reading-tools";
+import { ArticleShare, ReadingTools } from "./reading-tools";
 const components: PortableTextComponents = {
   block: {
     h2: ({ children, value }) => (
@@ -141,7 +141,7 @@ export function Article({ post }: { post: Post }) {
           __html: JSON.stringify(schema).replace(/</g, "\\u003c"),
         }}
       />
-      <ReadingTools lang={lang} />
+      <ReadingTools />
       <article className="article wrap">
         <div className="article-breadcrumb">
           <Link href={homePath(lang)}>{fa ? "نوشته‌ها" : "Journal"}</Link>
@@ -203,10 +203,13 @@ export function Article({ post }: { post: Post }) {
                   ? "ممنون که تا اینجا خواندید."
                   : "Thanks for reading this far."}
               </p>
-              <Link href={homePath(lang)}>
-                {fa ? "بازگشت به نوشته‌ها" : "Back to the journal"}
-                <Icon name="arrow" width="18" />
-              </Link>
+              <div className="article-actions">
+                <Link href={homePath(lang)}>
+                  {fa ? "بازگشت به نوشته‌ها" : "Back to the journal"}
+                  <Icon name="arrow" width="18" />
+                </Link>
+                <ArticleShare lang={lang} />
+              </div>
             </div>
           </div>
           <aside className="article-toc">
