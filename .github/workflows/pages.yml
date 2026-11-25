@@ -19,6 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       artifact_name: ${{ steps.artifact-name.outputs.name }}
+      reactions_url: ${{ steps.reactions.outputs.url }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -66,8 +67,17 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
         with:
           artifact_name: ${{ needs.build.outputs.artifact_name }}
+      - name: Verify published article reactions
+        run: node scripts/verify-reactions.mjs
+        env:
+          SITE_URL: ${{ steps.deployment.outputs.page_url }}
+          REACTIONS_URL: ${{ needs.build.outputs.reactions_url }}

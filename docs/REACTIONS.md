@@ -82,3 +82,5 @@ Never add reaction totals to structured data as review scores or manufacture ini
 For UI changes, inspect the article end in both languages at 360px and 1280px, keyboard focus, selected states, disabled requests, error/retry and unavailable browser storage. Keep the copy-link layout intact.
 
 Comments, visitor accounts, automatic translation and a custom publishing dashboard remain outside the implementation.
+
+After Pages deployment, `scripts/verify-reactions.mjs` checks live article HTML in each available language, preserved copy-link controls, the compiled public API endpoint and Worker health. These are HTTP checks; they do not replace visual browser QA.
