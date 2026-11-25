@@ -34,12 +34,20 @@ jobs:
       - run: npm run sync
       - run: npm run typecheck
       - run: npm test
+      - run: git diff --check
       - run: npm run studio:build
         env:
           SANITY_TELEMETRY_DISABLED: "1"
-      - name: Build published content
-        run: npm run build
+      - name: Deploy article reactions
+        id: reactions
+        run: node scripts/deploy-reactions.mjs
         env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      - name: Build published content
+        run: npm run build -w web && node scripts/finish-export.mjs
+        env:
+          BLOG_REACTIONS_URL: ${{ steps.reactions.outputs.url }}
           BLOG_BASE_PATH: ${{ steps.pages.outputs.base_path }}
           BLOG_SITE_URL: ${{ steps.pages.outputs.base_url }}
           NEXT_TELEMETRY_DISABLED: "1"

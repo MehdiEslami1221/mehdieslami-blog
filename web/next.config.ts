@@ -6,6 +6,7 @@ const config: NextConfig = {
   images: { unoptimized: true },
   experimental: { globalNotFound: true },
   env: {
+    NEXT_PUBLIC_REACTIONS_URL: process.env.BLOG_REACTIONS_URL || "",
     NEXT_PUBLIC_BASE_PATH: process.env.BLOG_BASE_PATH || "",
     NEXT_PUBLIC_SITE_URL:
       process.env.BLOG_SITE_URL || "https://blog.mehdieslami.ir",

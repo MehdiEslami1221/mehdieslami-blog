@@ -1,6 +1,6 @@
 # Journal maintenance
 
-This guide describes the project as of 24 November 2026. It covers the deployed reading experience, the editorial workflow and the contracts that other parts of the website depend on. Read the current source before making a change; article content and service settings can change independently of this repository.
+This guide describes the project as of 25 November 2026. It covers the deployed reading experience, the editorial workflow and the contracts that other parts of the website depend on. Read the current source before making a change; article content and service settings can change independently of this repository.
 
 ## Project boundaries
 
@@ -14,7 +14,7 @@ This guide describes the project as of 24 November 2026. It covers the deployed 
 | Portfolio source  | [MehdiEslami1221/MehdiEslami1221.github.io](https://github.com/MehdiEslami1221/MehdiEslami1221.github.io) |
 | Portfolio website | `https://mehdieslami.ir/` and `/fa/`                                                                      |
 
-The blog and portfolio are separate repositories and deployments. Blog maintenance should not replace the portfolio homepage or modify its root-domain DNS records. The public site stays a GitHub Pages static export. Sanity Studio is deployed separately to Sanity hosting.
+The blog and portfolio are separate repositories and deployments. Blog maintenance should not replace the portfolio homepage or modify its root-domain DNS records. The reading site stays a GitHub Pages static export. Article reactions call an independent Cloudflare Worker/D1 API. Sanity Studio is deployed separately to Sanity hosting.
 
 Current package versions are Next.js 16.4.6, React 19.3.1, TypeScript 7.0.2 and Sanity 6.24.0. Node.js 24 or later is required. Check the package manifests and lockfile when updating dependencies. Before changing Next.js behavior, read the installed version's documentation under `node_modules/next/dist/docs/`.
 
@@ -165,6 +165,6 @@ Temporary content can be supplied using `BLOG_CONTENT_FILE` for local QA. This i
 
 ## Features outside the current scope
 
-There are no comments, likes/dislikes, visitor accounts, realtime voting API, custom publishing dashboard or automatic translation. Sanity remains the editing interface. No Cloudflare Worker or D1 database has been provisioned for reactions, and no reaction count should be displayed as if one exists.
+Comments, visitor accounts, a custom publishing dashboard and automatic translation are not implemented. Sanity remains the editing interface.
 
-Any future reaction system needs its own agreed behavior and storage design. Browser-only counters would not provide a shared vote total. Keep these additions separate from routine blog maintenance and preserve the current reading and publication workflow.
+Article likes/dislikes are implemented in the separate Worker/D1 service described in [REACTIONS.md](REACTIONS.md). The publishing workflow updates its article registry and exports the verified API URL to the static frontend build. Preserve shared translation totals, stable document IDs and neutral tombstones. Browser storage is an anonymous convenience identifier, not proof of a unique person. There is no continuous realtime polling.

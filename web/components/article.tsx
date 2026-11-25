@@ -16,6 +16,7 @@ import {
   type Lang,
 } from "@/lib/content";
 import { Icon } from "./icons";
+import { Reactions } from "./reactions";
 import { ArticleShare, ReadingTools } from "./reading-tools";
 const components: PortableTextComponents = {
   block: {
@@ -203,6 +204,7 @@ export function Article({ post }: { post: Post }) {
                   ? "ممنون که تا اینجا خواندید."
                   : "Thanks for reading this far."}
               </p>
+              <Reactions postId={post._id} lang={lang} />
               <div className="article-actions">
                 <Link href={homePath(lang)}>
                   {fa ? "بازگشت به نوشته‌ها" : "Back to the journal"}

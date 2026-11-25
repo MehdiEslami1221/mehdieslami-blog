@@ -20,7 +20,7 @@ A Persian / English software journal, with a Next.js static frontend on GitHub P
 - Article metadata, structured data, sitemap, robots file and separate Persian/English RSS feeds.
 - A public snapshot supplying the portfolio's four most recent posts.
 
-Comments, reactions, visitor accounts and a custom publishing dashboard are not implemented. Sanity Studio remains the editor. See the [maintenance guide](docs/MAINTENANCE.md) before changing layout, routes, publication or the portfolio integration.
+Article likes/dislikes use a separate Cloudflare Worker and D1 database, with shared translation totals and no sign-in. See [reactions setup and behavior](docs/REACTIONS.md). Comments, visitor accounts and a custom publishing dashboard are not implemented. Sanity Studio remains the editor. See the [maintenance guide](docs/MAINTENANCE.md) before changing layout, routes, publication or the portfolio integration.
 
 ## Local development
 
