@@ -1,11 +1,21 @@
-# Flat homepage sky
+# Journal background
 
-Updated 28 November 2026. `web/components/black-hole.tsx` is now a **server-rendered, face-on 2D SVG** on the two journal homepages. It replaces the previous Canvas renderer after reports of heavy rendering.
+`web/components/space-background.tsx` owns the decorative background on the two journal homepages. It follows the portfolio's dark circuit/star identity: a full-viewport field, chamfered circuit traces, five slow signal packets, small code labels and occasional shooting stars. The notebook illustration remains independent. The retired black-hole disk/ring component must not be restored as the homepage background.
 
-The scene contains 24 static stars, a few circular/spiral strokes, a dark central disk and three small infall markers. `globals.css` animates only limited rotation, scaling and opacity. There is no 3D projection, ray tracing, Canvas, WebGL, device-pixel buffer, resize listener, animation-frame callback or per-frame React/JavaScript computation. The existing notebook illustration remains independent.
+## Rendering budget
 
-The rings are a stylized graphic of orbital flow, not a quantitative physical simulation. Do not describe them as full general relativity or an observed wormhole. Keep the flat circular view; do not reintroduce inclined disk layers, lensing calculations, particle trails or per-frame gradients without a measured performance need and an explicit visual change.
+The base scene is a deterministic SVG: 52 small stars, 21 circuit nodes and 20 paths. Only the star group's opacity and five dashed signal paths have continuous CSS motion. There is no Canvas, WebGL, 3D projection, particle field or frame-by-frame gradient generation.
 
-The decorative layer cannot intercept clicks and is faint enough to preserve reading contrast. Narrow screens use a smaller/lower-opacity SVG. `prefers-reduced-motion` removes all scene movement; print hides it. Motion is CSS/browser-managed rather than kept alive by a JavaScript timer. Preserve the charcoal/lime identity, header, notebook, content and article layouts.
+JavaScript schedules one 2.7-second meteor at a time, first after 4.5 seconds, with a 16–24-second gap thereafter. Only the active meteor uses requestAnimationFrame, capped to 24 drawing updates per second on narrow screens and 30 elsewhere. Between meteors there is no JavaScript frame loop. A single positioned HTML element supplies the tail/head. Its geometry uses physical screen coordinates in both text directions.
 
-Build the static site and check both homepages at 360px and desktop widths. Verify emitted HTML contains the SVG and no sky Canvas. Keep the reader bundle free of dashboard code and administrator credentials.
+## Panel reflections
+
+Homepage post cards, the notebook, author panel and RSS aside receive a noninteractive local `.space-reflection` overlay. A scoped child-list observer registers cards after search/filter rerenders and removes disconnected entries. Each panel has one overlay. Never put an overlay on a form control, cover it with a hit target, or move the card's content into an extra wrapper.
+
+Panel bounds are measured at most ten times per second **only during a meteor**. Nearby panels receive a local lime fill and masked rim; distant cards stay dark. The same head coordinates drive the visible meteor and reflection. Do not light every panel uniformly or read layout on every display frame.
+
+Hidden tabs, resize and OS reduced motion cancel the scheduled meteor, active frame and reflected light. Returning restarts a bounded delay. Reduced motion retains a static SVG and print hides all decoration. Cleanup removes timers, frame callbacks, observers, classes and overlays. Keep the scene clipped to the viewport so it cannot create horizontal overflow at 360px.
+
+## Checks
+
+Build and inspect Persian and English homepages at desktop and 360px widths. Check that the old central ring/disk and Canvas are absent, cards remain readable, filters can replace cards without duplicate overlays, the meteor and nearby reflections agree, reduced motion stops movement, and article pages do not load this homepage controller. Preserve the original fonts, notebook, header, article layout, canonical URLs and portfolio source.

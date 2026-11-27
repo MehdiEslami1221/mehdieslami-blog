@@ -1708,17 +1708,18 @@ html[dir="rtl"] .reading-progress > div {
   }
 }
 
-/* Flat SVG sky: no per-frame JavaScript, pixel buffers, filters or 3D projection. */
-.black-hole-sky { position: fixed; inset: 0; overflow: hidden; z-index: -1; pointer-events: none; opacity: .38; }
-.black-hole-sky svg { position: absolute; display: block; width: min(520px, 65vw); height: auto; inset-inline-end: 30%; top: 16%; }
-.sky-orbit, .sky-counter-orbit, .sky-capture { transform-origin: 250px 250px; }
-.sky-orbit { animation: sky-turn 70s linear infinite; }
-.sky-counter-orbit { animation: sky-turn 48s linear infinite reverse; }
-.sky-capture { animation: sky-infall 14s linear infinite; }
-.sky-capture-1 { animation-delay: -4.66s; }
-.sky-capture-2 { animation-delay: -9.33s; }
-@keyframes sky-turn { to { transform: rotate(360deg); } }
-@keyframes sky-infall { 0% { transform: rotate(0) scale(1); opacity: 0; } 12% { opacity: .8; } 80% { opacity: .8; } 100% { transform: rotate(320deg) scale(.3); opacity: 0; } }
-@media(max-width: 700px) { .black-hole-sky { opacity: .24; } .black-hole-sky svg { width: 290px; max-width: 85vw; top: 40%; inset-inline-end: -4%; } }
-@media(prefers-reduced-motion: reduce) { .black-hole-sky * { animation: none !important; } }
-@media print { .black-hole-sky { display: none; } }
+/* Portfolio-inspired circuit field. Static SVG plus five slow light packets. */
+.journal-sky { position: fixed; inset: 0; overflow: hidden; z-index: -1; pointer-events: none; background: radial-gradient(ellipse at 15% 35%,#8bc07909,transparent 55%),radial-gradient(ellipse at 85% 65%,#5dbbb008,transparent 55%); }
+.journal-sky > svg { width: 100%; height: 100%; display: block; }
+.sky-packets { animation: journal-packets 23s linear infinite; }
+.sky-stars { animation: journal-stars 9s ease-in-out infinite alternate; }
+@keyframes journal-packets { to { stroke-dashoffset: -805; } }
+@keyframes journal-stars { from { opacity: .55; } to { opacity: .95; } }
+.journal-meteor { position: absolute; top: 0; left: 0; height: 1.5px; width: 170px; opacity: 0; transform-origin: right center; margin-left: -170px; background: linear-gradient(90deg,transparent,#bdf66a77 75%,#e2ffc9); box-shadow: 0 0 9px #bdf66a55; border-radius: 100%; }
+.journal-meteor::after { content: ""; position: absolute; right: 0; top: -1px; width: 4px; height: 4px; border-radius: 50%; background: #e6ffda; }
+.space-reactive { position: relative; isolation: isolate; }
+.space-reflection { position: absolute; inset: 0; z-index: 2; pointer-events: none; border-radius: inherit; opacity: 0; overflow: hidden; background: radial-gradient(300px circle at var(--space-x) var(--space-y),#bdf66a25,transparent 78%); }
+.space-reflection::after { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px; background: radial-gradient(300px circle at var(--space-x) var(--space-y),#d9ffb5d9,transparent 78%); mask: linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0); mask-composite: exclude; }
+@media(max-width: 700px) { .journal-meteor { margin-left: -100px; } }
+@media(prefers-reduced-motion: reduce) { .journal-sky * { animation: none !important; } .journal-meteor,.space-reflection { display: none; } }
+@media print { .journal-sky,.space-reflection { display: none; } }

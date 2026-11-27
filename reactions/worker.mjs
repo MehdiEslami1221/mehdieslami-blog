@@ -271,7 +271,7 @@ function cookie(value, duration = 28800) {
 const securityHeaders = {
   "Cache-Control":"no-store", "X-Content-Type-Options":"nosniff", "X-Frame-Options":"DENY",
   "Referrer-Policy":"no-referrer", "X-Robots-Tag":"noindex, nofollow, noarchive",
-  "Content-Security-Policy":"default-src 'none'; script-src 'self'; style-src 'unsafe-inline'; connect-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'",
+  "Content-Security-Policy":"default-src 'none'; script-src 'self'; style-src 'unsafe-inline'; font-src https://blog.mehdieslami.ir; connect-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'",
   "Permissions-Policy":"camera=(), microphone=(), geolocation=()"
 };
 function adminResponse(body, status=200, headers={}) {
@@ -373,7 +373,7 @@ async function admin(request, env) {
     const rows = results.slice(0,20).map(row=>({id:row.id,sequence:row.seq,postId:row.post_id,
       name:row.name,body:row.body,language:row.language,createdAt:new Date(row.created_at).toISOString(),
       status:row.status,authorRemoved:Boolean(row.deleted),article:labels[row.post_id] || null,published:Object.hasOwn(registry,row.post_id),
-      parent:row.parent_id ? {name:row.parent_name||"",body:row.parent_body||"",status:row.parent_deleted?"removed":row.parent_status} : null}));
+      parent:row.parent_id ? {id:row.parent_id,name:row.parent_name||"",body:row.parent_body||"",status:row.parent_deleted?"removed":row.parent_status,authorRemoved:Boolean(row.parent_deleted)} : null}));
     const {results: counts} = await env.DB.prepare("SELECT " + stateSQL + " AS status,COUNT(*) AS total FROM comments c LEFT JOIN comment_moderation m ON m.comment_id=c.id GROUP BY 1").all();
     return adminResponse({comments:rows,next:results.length>20?rows.at(-1).sequence:null,counts:Object.fromEntries(counts.map(row=>[row.status,Number(row.total)]))});
   } catch(error) {

@@ -85,3 +85,16 @@ test("Login attempts are rate limited and admin HTML/scripts have restrictive se
  assert.equal(page.headers.get('X-Frame-Options'),'DENY');assert.ok(!page.data.includes(password));
  const js=await send('/admin/app.js');assert.equal(js.status,200);assert.ok(!js.data.includes('innerHTML'));assert.ok(!js.data.includes(password));
 });
+
+test("A replacement login cookie requires its own CSRF value and exposes the pending parent ID for review",async t=>{
+ const {send,login,post}=await configured(t);const root=await post();const first=await login();
+ await send('/admin/api/moderate',{...first,body:{id:root.body.id,state:'approved'}});
+ const reply=await post({parentId:root.body.id,body:'Reply waiting for review'});
+ const second=await login();
+ assert.equal((await send('/admin/api/moderate',{cookie:second.cookie,csrf:first.csrf,body:{id:reply.body.id,state:'approved'}})).status,403);
+ const fresh=await send('/admin/api/session',{cookie:second.cookie});assert.equal(fresh.data.csrf,second.csrf);
+ assert.equal((await send('/admin/api/moderate',{cookie:second.cookie,csrf:fresh.data.csrf,body:{id:reply.body.id,state:'approved'}})).status,200);
+ const queue=await send('/admin/api/comments?state=approved',second);
+ assert.equal(queue.data.comments.find(c=>c.id===reply.body.id).parent.id,root.body.id);
+ assert.equal(queue.data.comments.find(c=>c.id===reply.body.id).parent.authorRemoved,false);
+});

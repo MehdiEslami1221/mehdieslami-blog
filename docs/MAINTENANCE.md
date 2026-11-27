@@ -79,7 +79,7 @@ The date field is not a paid CMS scheduling feature. Drafts are never included. 
 - Preserve RTL/LTR layout and the Persian font on Persian text even within the English interface, including the language switch and language badges.
 - `home.tsx` renders the notebook illustration as HTML and SVG. `globals.css` animates its rings, orbiting points, code tiles and book using transforms and opacity. It is not a raster image that needs regeneration.
 - The page ambience uses a fixed decorative layer behind the content. Keep its contrast low, pointer events off and text readable.
-- Preserve the `prefers-reduced-motion` override and print rules. The notebook uses CSS only. The separate homepage sky is a flat SVG with a few CSS transforms; see SPACE.md.
+- Preserve the `prefers-reduced-motion` override and print rules. The notebook uses CSS only. The separate homepage sky uses SVG circuits/stars, occasional meteors and local card reflections; see SPACE.md.
 - `ReadingTools` owns the scroll progress indicator. `ArticleShare` owns clipboard interaction and its inline status. Both live in `web/components/reading-tools.tsx`.
 - The copy-link button belongs inside `.article-actions` at the end of the article, beside the return link. It must not be fixed over the site footer. If clipboard permission is unavailable, display the URL in the same area without overflow.
 - Reading time is an estimate derived from article text, not a recorded visitor statistic. The table of contents is generated from h2/h3 blocks.
@@ -171,8 +171,12 @@ Article likes/dislikes are implemented in the separate Worker/D1 service describ
 
 ## November 27 update
 
-Anonymous discussions now share the existing Worker/D1 service. See [COMMENTS.md](COMMENTS.md) for request IDs, translation grouping, name persistence, rate limits, deletion and owner moderation. [SPACE.md](SPACE.md) records the flat homepage SVG and motion limits. The Pages verifier checks the discussion form as well as reactions. No new credentials or hosting subscription are needed.
+Anonymous discussions now share the existing Worker/D1 service. See [COMMENTS.md](COMMENTS.md) for request IDs, translation grouping, name persistence, rate limits, deletion and owner moderation. [SPACE.md](SPACE.md) records the homepage atmosphere and motion limits. The Pages verifier checks the discussion form as well as reactions. No new credentials or hosting subscription are needed.
 
 ## Moderation and flat sky
 
-The Worker now serves `/admin/` with server-side password authentication, secure sessions and CSRF protection. `comment_moderation` defaults all missing/new states to pending; approve before public root/reply reads. Deployment retains the administrator password and uses an encrypted delivery envelope only for first bootstrap. Read COMMENTS.md before changing authentication or visibility. The homepage sky is now a flat static SVG with CSS transforms; the Canvas renderer and JS frame loop were removed. See SPACE.md.
+The Worker now serves `/admin/` with server-side password authentication, secure sessions and CSRF protection. `comment_moderation` defaults all missing/new states to pending; approve before public root/reply reads. Deployment retains the administrator password and uses an encrypted delivery envelope only for first bootstrap. Read COMMENTS.md before changing authentication or visibility. The homepage sky uses SVG circuits/stars and CSS motion. The former Canvas renderer is removed; JavaScript frames run only during an occasional short meteor. See SPACE.md.
+
+## Journal atmosphere and moderation reliability
+
+The homepage now follows the portfolio's circuit/star field with bounded SVG signals, an occasional short meteor and local card reflections. `space-background.tsx` replaces the retired `black-hole.tsx`. Only an active meteor has a capped JavaScript frame loop. The moderation dashboard inherits IRANSansX, locks controls during pending requests, refreshes stale CSRF state once after a changed session cookie, and distinguishes a saved decision from a failed list refresh. See SPACE.md and COMMENTS.md for constraints and tests.

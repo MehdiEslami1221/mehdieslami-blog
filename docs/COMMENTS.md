@@ -37,7 +37,7 @@ Open the Worker URL shown in the successful **Publish blog** summary and append 
 
 1. Sign in with the administrator password. The single account is labelled `admin`.
 2. Use **در انتظار تأیید** to review new/legacy comments and replies. The article title links to its public page, and replies show their parent context.
-3. Choose **تأیید و نمایش**, **رد نظر** or **حذف از نمایش**. A reply can be approved only while its root is approved and not author-deleted. Removing/rejecting a root also hides its replies from all public endpoints.
+3. Choose **تأیید و نمایش**, **رد نظر** or **حذف از نمایش**. A reply can be approved only while its root is approved and not author-deleted. A pending/hidden parent has an explicit **تأیید نظر اصلی** action beside its text; the reply is reviewed separately. Removing/rejecting a root also hides its replies from all public endpoints.
 4. Filter by approved/rejected/removed/all to inspect earlier decisions. Removing from display is recoverable: it changes the moderation state and retains the stored text. An author-deleted body cannot be restored by approving it.
 5. Use **تغییر رمز عبور** to enter the current password and a new password of 16–256 characters. Successful rotation invalidates every administrator session. Log out on shared devices.
 
@@ -63,3 +63,11 @@ Prefer changing the password from an authenticated dashboard. If it is lost, rec
 - Browser QA must use a disposable local database for test comments. Never publish demonstration conversations to the live blog.
 - The deploy script checks a real discussion read after migration. The Pages verification script checks localized discussion markup/fields alongside reactions, share controls, endpoint wiring and Worker health.
 - Preserve names/drafts on recoverable failures, accessible labels/status, focusable reply/removal actions, native `dir="auto"` for text and normal-flow footer layout.
+
+## Dashboard request handling and typography
+
+The dashboard uses the owner's IRANSansX Regular/Bold files from the journal's public `/assets/fonts/` paths. The font host returns CORS permission; the Worker CSP permits fonts only from the journal domain. Form controls inherit that family. No new commercial font files or external font provider are introduced.
+
+While a queue read or moderation request is pending, filters and buttons stay disabled, including newly rendered card actions. A changed cookie after login in another tab can leave a stale CSRF value in memory; on `csrf_required` the client fetches the current authenticated session and retries the same write once. This does not relax origin, cookie, authentication or server CSRF checks. An expired session still requires login.
+
+A successful moderation write and its subsequent list refresh have separate results: if refresh fails, the status says the decision was saved and offers refresh. It must never claim that a confirmed approval failed. Approval of an unpublished article also states that the article is not currently published. `tests/admin-client.test.mjs` uses jsdom as a pinned test-only dependency for loading/lock states, changed-session recovery, parent actions, success-after-refresh-failure and font selection. Worker tests cover the corresponding cookie/CSRF contract.

@@ -19,5 +19,8 @@
     "studio:build": "npm run build -w studio",
     "studio:deploy": "npm run deploy -w studio",
     "sync": "node scripts/fetch-content.mjs"
+  },
+  "devDependencies": {
+    "jsdom": "29.1.1"
   }
 }

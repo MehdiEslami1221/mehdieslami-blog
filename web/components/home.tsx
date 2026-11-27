@@ -1,4 +1,4 @@
-import { BlackHole } from "./black-hole";
+import { SpaceBackground } from "./space-background";
 import {
   listedPosts,
   asset,
@@ -27,7 +27,7 @@ export function Home({ lang }: { lang: Lang }) {
   };
   return (
     <>
-      <BlackHole />
+      <SpaceBackground />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
