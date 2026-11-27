@@ -1709,8 +1709,8 @@ html[dir="rtl"] .reading-progress > div {
 }
 
 /* Flat SVG sky: no per-frame JavaScript, pixel buffers, filters or 3D projection. */
-.black-hole-sky { position: fixed; width: min(520px, 65vw); aspect-ratio: 1; inset-inline-end: 30%; top: 16%; z-index: -1; pointer-events: none; opacity: .38; }
-.black-hole-sky svg { display: block; width: 100%; height: 100%; }
+.black-hole-sky { position: fixed; inset: 0; overflow: hidden; z-index: -1; pointer-events: none; opacity: .38; }
+.black-hole-sky svg { position: absolute; display: block; width: min(520px, 65vw); height: auto; inset-inline-end: 30%; top: 16%; }
 .sky-orbit, .sky-counter-orbit, .sky-capture { transform-origin: 250px 250px; }
 .sky-orbit { animation: sky-turn 70s linear infinite; }
 .sky-counter-orbit { animation: sky-turn 48s linear infinite reverse; }
@@ -1719,6 +1719,6 @@ html[dir="rtl"] .reading-progress > div {
 .sky-capture-2 { animation-delay: -9.33s; }
 @keyframes sky-turn { to { transform: rotate(360deg); } }
 @keyframes sky-infall { 0% { transform: rotate(0) scale(1); opacity: 0; } 12% { opacity: .8; } 80% { opacity: .8; } 100% { transform: rotate(320deg) scale(.3); opacity: 0; } }
-@media(max-width: 700px) { .black-hole-sky { width: 290px; max-width: 85vw; top: 40%; inset-inline-end: -4%; opacity: .24; } }
+@media(max-width: 700px) { .black-hole-sky { opacity: .24; } .black-hole-sky svg { width: 290px; max-width: 85vw; top: 40%; inset-inline-end: -4%; } }
 @media(prefers-reduced-motion: reduce) { .black-hole-sky * { animation: none !important; } }
 @media print { .black-hole-sky { display: none; } }
