@@ -1,5 +1,5 @@
 import { readFile, appendFile } from "node:fs/promises";
-import { createHash, randomBytes } from "node:crypto";
+import { createHash, randomBytes, publicEncrypt, pbkdf2Sync } from "node:crypto";
 import { buildRegistry } from "../reactions/registry.mjs";
 
 const ACCOUNT = (process.env.CLOUDFLARE_ACCOUNT_ID || "").trim();
@@ -31,8 +31,9 @@ async function main() {
   const { posts } = JSON.parse(await readFile("web/lib/generated/content.json", "utf8"));
   const registry = buildRegistry(posts);
   const source = await readFile("reactions/worker.mjs", "utf8");
+  const adminSource = await readFile("reactions/admin-page.mjs", "utf8");
   const schema = await readFile("reactions/schema.sql", "utf8");
-  const revision = createHash("sha256").update(source + schema + ALLOWED).digest("hex");
+  const revision = createHash("sha256").update(source + adminSource + schema + ALLOWED).digest("hex");
   const subdomain = await api("/workers/subdomain");
   if (!subdomain?.subdomain || !/^[a-z0-9-]+$/i.test(subdomain.subdomain))
     throw new Error("Finish the free Workers & Pages onboarding and select a workers.dev subdomain.");
@@ -62,6 +63,22 @@ async function main() {
   if (!/^[a-f0-9]{64}$/.test(secret || "")) throw new Error("Invalid private reaction signing key");
   await query("INSERT INTO settings(key,value) VALUES('articles',?) ON CONFLICT(key) DO UPDATE SET value=excluded.value WHERE value != excluded.value",
     [JSON.stringify(registry)]);
+  const labels = Object.fromEntries(posts.map(post => [post._id, {title:post.title,language:post.language,slug:post.slug}]));
+  await query("INSERT INTO settings(key,value) VALUES('article-labels',?) ON CONFLICT(key) DO UPDATE SET value=excluded.value", [JSON.stringify(labels)]);
+  let initialPassword;
+  if (!(await query("SELECT value FROM settings WHERE key='admin-password'"))[0].results?.length) {
+    // First installation only. Plaintext never enters Git, settings, a bundle or logs.
+    const password = randomBytes(24).toString("base64url");
+    initialPassword = password;
+    const salt = randomBytes(24).toString("hex");
+    const verifier = { salt,iterations:100000,hash:pbkdf2Sync(password,salt,100000,32,"sha256").toString("hex") };
+    const publicKey = await readFile("reactions/admin-bootstrap.pub","utf8");
+    const envelope = publicEncrypt({key:publicKey,oaepHash:"sha256"},Buffer.from(password)).toString("base64");
+    await query("INSERT INTO settings(key,value) VALUES('admin-password',?),('admin-bootstrap-envelope',?) ON CONFLICT(key) DO NOTHING", [JSON.stringify(verifier),envelope]);
+  }
+  const envelope = (await query("SELECT value FROM settings WHERE key='admin-bootstrap-envelope'"))[0].results?.[0]?.value;
+  if (envelope) console.log("ADMIN_BOOTSTRAP_ENVELOPE=" + envelope);
+  await query("DELETE FROM admin_sessions WHERE expires_at<=?", [Date.now()]);
   await query("DELETE FROM rate_limits WHERE window < ?", [Math.floor(Date.now() / 60000) - 1440]);
   const previous = (await query("SELECT value FROM settings WHERE key = 'worker-revision'"))[0].results?.[0]?.value;
   const existing = await api("/workers/scripts/" + NAME + "/settings", "GET", undefined, true);
@@ -83,6 +100,7 @@ async function main() {
       ]
     })], { type: "application/json" }));
     form.append("worker.mjs", new Blob([source], { type: "application/javascript+module" }), "worker.mjs");
+    form.append("admin-page.mjs", new Blob([adminSource], { type: "application/javascript+module" }), "admin-page.mjs");
     await api("/workers/scripts/" + NAME, "PUT", form);
   }
   await api("/workers/scripts/" + NAME + "/subdomain", "POST", { enabled: true, previews_enabled: false });
@@ -97,6 +115,29 @@ async function main() {
     await new Promise(resolve => setTimeout(resolve, 3000));
   }
   if (!ready) throw new Error("Reaction Worker has not become healthy; the website deployment is stopped.");
+  const adminPage = await fetch(endpoint + "/admin/", {signal:AbortSignal.timeout(10000)});
+  if (!adminPage.ok || !(await adminPage.text()).includes("مدیریت دیدگاه‌ها")) throw new Error("Moderation page is unavailable");
+  const privateList = await fetch(endpoint + "/admin/api/comments", {signal:AbortSignal.timeout(10000)});
+  if (privateList.status !== 401 || privateList.headers.has("Access-Control-Allow-Origin"))
+    throw new Error("Moderation API must require authentication");
+  console.log("Moderation page ready; anonymous access to the private API is denied.");
+  if (initialPassword) {
+    const login = await fetch(endpoint + "/admin/api/login", {method:"POST",redirect:"error",
+      headers:{Origin:endpoint,"Content-Type":"application/json"},body:JSON.stringify({password:initialPassword}),signal:AbortSignal.timeout(15000)});
+    const auth = await login.json();
+    const sessionCookie = login.headers.get("Set-Cookie")?.split(";")[0];
+    if (!login.ok || !auth.csrf || !sessionCookie) throw new Error("Initial moderation sign-in check failed");
+    try {
+      const privateRead = await fetch(endpoint+"/admin/api/comments",{redirect:"error",headers:{Origin:endpoint,Cookie:sessionCookie},signal:AbortSignal.timeout(10000)});
+      if (!privateRead.ok || !Array.isArray((await privateRead.json()).comments)) throw new Error("Private moderation queue check failed");
+    } finally {
+      const logout = await fetch(endpoint+"/admin/api/logout",{method:"POST",redirect:"error",headers:{Origin:endpoint,Cookie:sessionCookie,"X-CSRF-Token":auth.csrf,"Content-Type":"application/json"},body:"{}",signal:AbortSignal.timeout(10000)});
+      if (!logout.ok) throw new Error("Initial moderation logout check failed");
+    }
+    initialPassword = undefined;
+    console.log("Initial administrator login, private queue and logout verified.");
+  }
+
   const postId = Object.keys(registry)[0];
   if (postId) {
     const response = await fetch(endpoint + "/v1/reactions?post=" + encodeURIComponent(postId),
@@ -149,5 +190,6 @@ async function main() {
     "### Article reactions\n\nAPI: " + endpoint + "\n\nPublished article registry: " + Object.keys(registry).length +
     " documents. Worker health and D1 read check passed.\n");
   console.log("Reactions API ready: " + endpoint);
+  console.log("Moderation dashboard: " + endpoint + "/admin/");
 }
 main().catch(error => { console.error(error.message); process.exitCode = 1; });

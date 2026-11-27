@@ -30,3 +30,16 @@ CREATE TABLE IF NOT EXISTS comments (
 );
 CREATE INDEX IF NOT EXISTS comments_threads ON comments(post_id, parent_id, seq);
 CREATE INDEX IF NOT EXISTS comments_replies ON comments(parent_id, seq);
+
+CREATE TABLE IF NOT EXISTS comment_moderation (
+  comment_id TEXT PRIMARY KEY,
+  state TEXT NOT NULL CHECK(state IN ('pending','approved','rejected','removed')),
+  updated_at INTEGER NOT NULL
+) WITHOUT ROWID;
+CREATE INDEX IF NOT EXISTS moderation_state ON comment_moderation(state, comment_id);
+CREATE TABLE IF NOT EXISTS admin_sessions (
+  token_hash TEXT PRIMARY KEY,
+  csrf TEXT NOT NULL,
+  expires_at INTEGER NOT NULL
+) WITHOUT ROWID;
+CREATE INDEX IF NOT EXISTS admin_session_expiry ON admin_sessions(expires_at);

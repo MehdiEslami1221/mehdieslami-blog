@@ -1,6 +1,6 @@
 # Journal maintenance
 
-This guide describes the project as of 27 November 2026. It covers the deployed reading experience, the editorial workflow and the contracts that other parts of the website depend on. Read the current source before making a change; article content and service settings can change independently of this repository.
+This guide describes the project as of 28 November 2026. It covers the deployed reading experience, the editorial workflow and the contracts that other parts of the website depend on. Read the current source before making a change; article content and service settings can change independently of this repository.
 
 ## Project boundaries
 
@@ -79,7 +79,7 @@ The date field is not a paid CMS scheduling feature. Drafts are never included. 
 - Preserve RTL/LTR layout and the Persian font on Persian text even within the English interface, including the language switch and language badges.
 - `home.tsx` renders the notebook illustration as HTML and SVG. `globals.css` animates its rings, orbiting points, code tiles and book using transforms and opacity. It is not a raster image that needs regeneration.
 - The page ambience uses a fixed decorative layer behind the content. Keep its contrast low, pointer events off and text readable.
-- Preserve the `prefers-reduced-motion` override and print rules. The notebook uses CSS only. The separate homepage sky has a bounded Canvas loop; see SPACE.md for hidden-tab, reduced-motion and density limits.
+- Preserve the `prefers-reduced-motion` override and print rules. The notebook uses CSS only. The separate homepage sky is a flat SVG with a few CSS transforms; see SPACE.md.
 - `ReadingTools` owns the scroll progress indicator. `ArticleShare` owns clipboard interaction and its inline status. Both live in `web/components/reading-tools.tsx`.
 - The copy-link button belongs inside `.article-actions` at the end of the article, beside the return link. It must not be fixed over the site footer. If clipboard permission is unavailable, display the URL in the same area without overflow.
 - Reading time is an estimate derived from article text, not a recorded visitor statistic. The table of contents is generated from h2/h3 blocks.
@@ -171,4 +171,8 @@ Article likes/dislikes are implemented in the separate Worker/D1 service describ
 
 ## November 27 update
 
-Anonymous discussions now share the existing Worker/D1 service. See [COMMENTS.md](COMMENTS.md) for request IDs, translation grouping, name persistence, rate limits, deletion and owner moderation. [SPACE.md](SPACE.md) records the homepage canvas model and its physical/performance limits. The Pages verifier checks the discussion form as well as reactions. No new credentials or hosting subscription are needed.
+Anonymous discussions now share the existing Worker/D1 service. See [COMMENTS.md](COMMENTS.md) for request IDs, translation grouping, name persistence, rate limits, deletion and owner moderation. [SPACE.md](SPACE.md) records the flat homepage SVG and motion limits. The Pages verifier checks the discussion form as well as reactions. No new credentials or hosting subscription are needed.
+
+## Moderation and flat sky
+
+The Worker now serves `/admin/` with server-side password authentication, secure sessions and CSRF protection. `comment_moderation` defaults all missing/new states to pending; approve before public root/reply reads. Deployment retains the administrator password and uses an encrypted delivery envelope only for first bootstrap. Read COMMENTS.md before changing authentication or visibility. The homepage sky is now a flat static SVG with CSS transforms; the Canvas renderer and JS frame loop were removed. See SPACE.md.

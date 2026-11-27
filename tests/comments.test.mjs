@@ -10,7 +10,11 @@ function client(env, token = "a".repeat(64), ip = "192.0.2.10") {
       method, headers: { Origin: origin, "X-Voter-ID": token, "CF-Connecting-IP": ip, ...(body ? { "Content-Type": "application/json" } : {}) },
       ...(body ? { body: JSON.stringify(body) } : {})
     }), env);
-    return { status: res.status, data: await res.json(), headers: res.headers };
+    const data = await res.json();
+    // These legacy lifecycle scenarios explicitly publish each accepted submission.
+    // Moderation privacy/authentication has separate tests without this helper.
+    if (res.ok && body && data.status) await env.DB.prepare("INSERT INTO comment_moderation(comment_id,state,updated_at) VALUES(?, 'approved', ?) ON CONFLICT(comment_id) DO UPDATE SET state='approved'").bind(data.id,Date.now()).run();
+    return { status: res.status, data, headers: res.headers };
   };
 }
 function draft(change = {}) { return { id: randomBytes(16).toString("hex"), postId:"fa-one", name:"مهدی", body:"یک نظر برای آزمون", language:"fa", ...change }; }
@@ -18,8 +22,8 @@ test("Anonymous names, text, translated discussions and retry IDs persist withou
   const {env,sqlite} = setup(t); const call = client(env);
   const first = draft();
   const result = await call(first);
-  assert.equal(result.status,200); assert.equal(result.data.comment.name,"مهدی"); assert.equal(result.data.comment.mine,true);
-  assert.equal((await call(first)).data.comment.id, result.data.comment.id);
+  assert.equal(result.status,200); assert.equal(result.data.status,"pending"); const saved=(await call()).data.threads[0];assert.equal(saved.name,"مهدی");assert.equal(saved.mine,true);
+  assert.equal((await call(first)).data.id, result.data.id);
   assert.equal(sqlite.prepare("SELECT COUNT(*) n FROM comments").get().n,1);
   const other = client(env,"b".repeat(64));
   const reply = await other(draft({postId:"en-one", parentId:first.id, language:"en", name:"Reader",body:"I disagree: <script>alert(1)</script>"}));
@@ -56,6 +60,7 @@ test("Thread and reply cursors paginate without duplicates or omitted rows", asy
   const ids=Array.from({length:24},()=>randomBytes(16).toString("hex"));
   ids.forEach(id=>insert.run(id,"fa-one",null,"hash","Reader","Body","en",Date.now()));
   for(let i=0;i<25;i++) insert.run(randomBytes(16).toString("hex"),"fa-one",ids.at(-1),"hash","Reader","Reply "+i,"en",Date.now());
+  sqlite.prepare("INSERT INTO comment_moderation(comment_id,state,updated_at) SELECT id, 'approved', ? FROM comments").run(Date.now());
   const call=client(env); let cursor=null;const seen=[];
   do {const data=(await call(null,"post=en-one"+(cursor?"&before="+cursor:""))).data;seen.push(...data.threads.map(c=>c.id));cursor=data.next;}while(cursor);
   assert.equal(seen.length,24);assert.equal(new Set(seen).size,24);

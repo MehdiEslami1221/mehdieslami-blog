@@ -112,14 +112,11 @@ export function Comments({ postId, lang }: { postId: string; lang: Lang }) {
     const id = draftId.current.id;
     void perform(async () => {
       const result = await api("", { ...content, id });
-      if (!validComment(result.comment)) throw new Error("connection");
+      if (result.id !== id || !["pending","approved","rejected","removed"].includes(result.status)) throw new Error("connection");
       if (!alive.current) return;
-      const saved = result.comment as Comment;
-      if (saved.parentId) setThreads(previous => previous.map(t => t.id === saved.parentId ?
-        { ...t, replies: [...t.replies.filter(c => c.id !== saved.id), saved] } : t));
-      else setThreads(previous => [{ ...saved, replies: [], nextReply: null }, ...previous.filter(c => c.id !== saved.id)]);
       setBody(""); setReply(null); draftId.current = null;
-      setMessage(text("Your comment is published.", "نظر شما منتشر شد."));
+      setMessage(text("Your comment was submitted for review. It will appear after approval.", "نظر شما برای بررسی ثبت شد و پس از تأیید نمایش داده می‌شود."));
+
     });
   }
   async function olderReplies(thread: Thread) {
@@ -163,8 +160,8 @@ export function Comments({ postId, lang }: { postId: string; lang: Lang }) {
       <label htmlFor="comment-body">{reply ? text("Your reply", "پاسخ شما") : text("Your comment", "نظر شما")}</label>
       <textarea ref={textarea} id="comment-body" name="body" value={body} onChange={e => setBody(e.target.value)} maxLength={2000} required rows={4} dir="auto" />
       <div className={styles.submit}><small>{new Intl.NumberFormat(lang).format(body.length)} / {new Intl.NumberFormat(lang).format(2000)}</small>
-        <button type="submit" disabled={busy || !loaded || !name.trim() || !body.trim()}>{busy ? text("Please wait…", "لطفاً صبر کنید…") : reply ? text("Publish reply", "انتشار پاسخ") : text("Publish comment", "انتشار نظر")}</button></div>
-      <small>{text("Comments are public. Please keep the discussion respectful and avoid sharing private information.", "نظرها عمومی‌اند. لطفاً محترمانه و مرتبط بنویسید و اطلاعات خصوصی را در نظر وارد نکنید.")}</small>
+        <button type="submit" disabled={busy || !loaded || !name.trim() || !body.trim()}>{busy ? text("Please wait…", "لطفاً صبر کنید…") : reply ? text("Submit reply", "ثبت پاسخ") : text("Submit comment", "ثبت نظر")}</button></div>
+      <small>{text("Comments appear after review. Please keep the discussion respectful and avoid sharing private information.", "نظرها پس از بررسی و تأیید نمایش داده می‌شوند. لطفاً محترمانه و مرتبط بنویسید و اطلاعات خصوصی را در نظر وارد نکنید.")}</small>
     </form>
     <p className={styles.status} role="status">{error ? error === "rate" ? text("Too many requests. Please try again in 10 minutes.", "تعداد درخواست‌ها زیاد است؛ ۱۰ دقیقه دیگر دوباره تلاش کنید.") : error === "parent" ? text("That comment is no longer available for replies. Cancel the reply and refresh.", "نظر انتخاب‌شده دیگر قابل پاسخ نیست. پاسخ را لغو و فهرست را تازه کنید.") : text("Comments could not be updated. Your draft is still here; please try again.", "ارتباط با بخش نظرها برقرار نشد. متن شما حفظ شده است؛ دوباره تلاش کنید.") : message || (!loaded && busy ? text("Loading discussion…", "در حال دریافت نظرها…") : "")}</p>
     <div className={styles.toolbar}><h3>{text("Discussion", "نظرها و پاسخ‌ها")}</h3><button type="button" disabled={busy} onClick={() => void perform(() => read())}>{text("Refresh comments", "تازه‌سازی نظرها")}</button></div>

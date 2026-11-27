@@ -25,7 +25,7 @@ export function setup(t, initial = buildRegistry(source)) {
       }
     };
   }
-  const env = { DB: { prepare }, VOTE_SECRET: "test-only-secret", ALLOWED_ORIGINS: JSON.stringify([origin]), REVISION: "test" };
+  const env = { DB: { prepare, async batch(statements) { sqlite.exec("BEGIN"); try { const results=[]; for (const statement of statements) results.push(await statement.run()); sqlite.exec("COMMIT"); return results; } catch(error) { sqlite.exec("ROLLBACK"); throw error; } } }, VOTE_SECRET: "test-only-secret", ALLOWED_ORIGINS: JSON.stringify([origin]), REVISION: "test" };
   function registry(value) {
     sqlite.prepare("INSERT INTO settings(key,value) VALUES('articles',?) ON CONFLICT(key) DO UPDATE SET value=excluded.value").run(JSON.stringify(value));
   }
