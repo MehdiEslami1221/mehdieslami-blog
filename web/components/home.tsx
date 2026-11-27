@@ -1,3 +1,4 @@
+import { BlackHole } from "./black-hole";
 import {
   listedPosts,
   asset,
@@ -26,6 +27,7 @@ export function Home({ lang }: { lang: Lang }) {
   };
   return (
     <>
+      <BlackHole />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

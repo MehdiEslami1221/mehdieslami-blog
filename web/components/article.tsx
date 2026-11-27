@@ -1,3 +1,4 @@
+import { Comments } from "./comments";
 import Link from "next/link";
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import type { PortableTextBlock } from "@portabletext/types";
@@ -205,6 +206,7 @@ export function Article({ post }: { post: Post }) {
                   : "Thanks for reading this far."}
               </p>
               <Reactions postId={post._id} lang={lang} />
+              <Comments postId={post._id} lang={lang} />
               <div className="article-actions">
                 <Link href={homePath(lang)}>
                   {fa ? "بازگشت به نوشته‌ها" : "Back to the journal"}

@@ -105,6 +105,12 @@ async function main() {
     if (!response.ok || data.postId !== postId || !Number.isInteger(data.likes) ||
         !Number.isInteger(data.dislikes) || data.selected !== 0)
       throw new Error("Live reactions read check failed");
+    const discussion = await fetch(endpoint + "/v1/comments?post=" + encodeURIComponent(postId),
+      { headers: { Origin: ORIGIN }, signal: AbortSignal.timeout(10000) });
+    const comments = await discussion.json();
+    if (!discussion.ok || comments.version !== 1 || comments.postId !== postId || !Array.isArray(comments.threads))
+      throw new Error("Live discussion read check failed");
+    console.log("Published discussion API and D1 read check passed.");
     // Exercise the actual deployed persistence only when the Worker implementation changes.
     // This temporary browser identity is reset to neutral before publishing the website.
     if (changed) {

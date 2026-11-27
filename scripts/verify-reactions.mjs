@@ -25,6 +25,10 @@ async function verify() {
     assert.ok(html.includes(lang === "fa" ? "این نوشته برایتان مفید بود؟" : "Was this post useful?"),
       "Published article is missing its localized reactions section");
     assert.ok(html.includes('aria-pressed="false"'), "Reaction buttons must expose their state");
+    assert.ok(html.includes(lang === "fa" ? "گفت‌وگو دربارهٔ این نوشته" : "Join the discussion"),
+      "Published article is missing its discussion form");
+    assert.ok(html.includes('id="comment-name"') && html.includes('id="comment-body"'),
+      "Published discussion is missing its accessible fields");
     assert.ok(html.includes("share-article"), "The existing copy-link action must remain");
     for (const match of html.matchAll(/<script[^>]+src="([^"]+)"[^>]*>/g)) {
       const script = new URL(match[1].replaceAll("&amp;", "&"), page);
@@ -37,7 +41,7 @@ async function verify() {
   const health = JSON.parse(await text(api + "/health"));
   assert.equal(health.ok, true);
   console.log("Published article HTML checked for: " + [...samples.keys()].join(", "));
-  console.log("Reaction controls, preserved share action, live API and bundled endpoint verified.");
+  console.log("Reaction controls, discussion form, preserved share action, live API and bundled endpoint verified.");
 }
 let failure;
 for (let attempt = 0; attempt < 6; attempt++) {

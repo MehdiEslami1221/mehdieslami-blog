@@ -1,6 +1,6 @@
 # Journal maintenance
 
-This guide describes the project as of 25 November 2026. It covers the deployed reading experience, the editorial workflow and the contracts that other parts of the website depend on. Read the current source before making a change; article content and service settings can change independently of this repository.
+This guide describes the project as of 27 November 2026. It covers the deployed reading experience, the editorial workflow and the contracts that other parts of the website depend on. Read the current source before making a change; article content and service settings can change independently of this repository.
 
 ## Project boundaries
 
@@ -79,7 +79,7 @@ The date field is not a paid CMS scheduling feature. Drafts are never included. 
 - Preserve RTL/LTR layout and the Persian font on Persian text even within the English interface, including the language switch and language badges.
 - `home.tsx` renders the notebook illustration as HTML and SVG. `globals.css` animates its rings, orbiting points, code tiles and book using transforms and opacity. It is not a raster image that needs regeneration.
 - The page ambience uses a fixed decorative layer behind the content. Keep its contrast low, pointer events off and text readable.
-- Preserve the `prefers-reduced-motion` override and print rules. No animation package or JavaScript animation loop is needed for the decorative motion.
+- Preserve the `prefers-reduced-motion` override and print rules. The notebook uses CSS only. The separate homepage sky has a bounded Canvas loop; see SPACE.md for hidden-tab, reduced-motion and density limits.
 - `ReadingTools` owns the scroll progress indicator. `ArticleShare` owns clipboard interaction and its inline status. Both live in `web/components/reading-tools.tsx`.
 - The copy-link button belongs inside `.article-actions` at the end of the article, beside the return link. It must not be fixed over the site footer. If clipboard permission is unavailable, display the URL in the same area without overflow.
 - Reading time is an estimate derived from article text, not a recorded visitor statistic. The table of contents is generated from h2/h3 blocks.
@@ -165,6 +165,10 @@ Temporary content can be supplied using `BLOG_CONTENT_FILE` for local QA. This i
 
 ## Features outside the current scope
 
-Comments, visitor accounts, a custom publishing dashboard and automatic translation are not implemented. Sanity remains the editing interface.
+Visitor accounts, a custom publishing dashboard and automatic translation are not implemented. Anonymous discussions are described in [COMMENTS.md](COMMENTS.md). Sanity remains the editing interface.
 
 Article likes/dislikes are implemented in the separate Worker/D1 service described in [REACTIONS.md](REACTIONS.md). The publishing workflow updates its article registry and exports the verified API URL to the static frontend build. Preserve shared translation totals, stable document IDs and neutral tombstones. Browser storage is an anonymous convenience identifier, not proof of a unique person. There is no continuous realtime polling.
+
+## November 27 update
+
+Anonymous discussions now share the existing Worker/D1 service. See [COMMENTS.md](COMMENTS.md) for request IDs, translation grouping, name persistence, rate limits, deletion and owner moderation. [SPACE.md](SPACE.md) records the homepage canvas model and its physical/performance limits. The Pages verifier checks the discussion form as well as reactions. No new credentials or hosting subscription are needed.

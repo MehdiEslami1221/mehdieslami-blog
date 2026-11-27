@@ -16,11 +16,11 @@ A Persian / English software journal, with a Next.js static frontend on GitHub P
 - Linked translations, with original-language posts retained when a translation is unavailable.
 - Portable Text articles, code blocks, images, tags, reading estimates and a heading-based table of contents.
 - Reading progress and an inline copy-link action at the end of each article.
-- An animated notebook illustration and a subtle moving background, respecting reduced motion.
+- An animated notebook and a black-hole sky with differential disk rotation, infall and lensing-inspired arcs; reduced motion keeps a static scene. See [visual model and limits](docs/SPACE.md).
 - Article metadata, structured data, sitemap, robots file and separate Persian/English RSS feeds.
 - A public snapshot supplying the portfolio's four most recent posts.
 
-Article likes/dislikes use a separate Cloudflare Worker and D1 database, with shared translation totals and no sign-in. See [reactions setup and behavior](docs/REACTIONS.md). Comments, visitor accounts and a custom publishing dashboard are not implemented. Sanity Studio remains the editor. See the [maintenance guide](docs/MAINTENANCE.md) before changing layout, routes, publication or the portfolio integration.
+Article likes/dislikes use a separate Cloudflare Worker and D1 database, with shared translation totals and no sign-in. See [reactions setup and behavior](docs/REACTIONS.md). Anonymous comments and replies use that same service; see [discussion behavior and moderation](docs/COMMENTS.md). Visitor accounts and a custom publishing dashboard are not implemented. Sanity Studio remains the editor. See the [maintenance guide](docs/MAINTENANCE.md) before changing layout, routes, publication or the portfolio integration.
 
 ## Local development
 
@@ -109,4 +109,4 @@ See [README.fa.md](README.fa.md) for the Persian guide and [AGENTS.md](AGENTS.md
 
 Both journal interfaces show untranslated posts in their original language, with a language label and native text direction. Published linked translations replace duplicate cards in the preferred interface language. The export also writes `latest-posts.json` for the portfolio, containing up to four latest entries per interface, public metadata only. The portfolio reads it after each blog deployment without its own rebuild. RSS remains separated by article language.
 
-The notebook illustration and background have subtle CSS motion that respects the system's reduced-motion preference. The article copy-link action sits beside the return link at the end of each article, with an inline status or copyable URL when clipboard access is unavailable, so it cannot cover footer links.
+The notebook uses CSS motion; the homepage black-hole canvas has bounded density and frame rate. Both respect the system's reduced-motion preference. The article copy-link action sits beside the return link at the end of each article, with an inline status or copyable URL when clipboard access is unavailable, so it cannot cover footer links.

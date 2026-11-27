@@ -1707,3 +1707,7 @@ html[dir="rtl"] .reading-progress > div {
     color: black;
   }
 }
+
+/* Fixed decorative sky never intercepts navigation or changes article layout. */
+.black-hole-sky { position: fixed; inset: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; opacity: .85; }
+@media print { .black-hole-sky { display: none; } }
