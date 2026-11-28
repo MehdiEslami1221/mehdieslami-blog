@@ -4,6 +4,8 @@
 
 [وبلاگ فارسی](https://blog.mehdieslami.ir/) · [وبلاگ انگلیسی](https://blog.mehdieslami.ir/en/) · [پنل نوشتن](https://mehdi-eslami-blog.sanity.studio/) · [راهنمای فنی نگهداری](docs/MAINTENANCE.md)
 
+[راهنمای انتشار، تأیید نظر و تمدید توکن](docs/OPERATIONS.fa.md) · [فهرست مستندات](docs/README.md)
+
 ## امکانات فعلی
 
 - صفحهٔ مستقل برای هر مقاله با متن، تصویر، قطعه‌کد، برچسب و تنظیمات سئو.

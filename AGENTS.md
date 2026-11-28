@@ -2,6 +2,8 @@
 
 Read both READMEs, docs/MAINTENANCE.md and docs/PUBLISHING.md. This is the independent blog for blog.mehdieslami.ir, with Next.js/TypeScript static exports on GitHub Pages and Sanity project kaaepoyb, public production dataset. The owner's portfolio lives in a separate repository and must not be changed by blog maintenance.
 
+`docs/README.md` indexes the topic guides. `docs/OPERATIONS.fa.md` documents owner publication, moderation and credential rotation in Persian. Keep source maps, behavior contracts and operational instructions synchronized when their implementation changes; document only verification actually performed.
+
 Preserve the charcoal/lime ME identity, real supplied portrait, commercial owner-supplied IRANSansX fonts, Persian/English layouts and native reading direction. Persian copy uses fluent standard written Persian and respectful plural address. Do not publish sample posts, fake reading statistics, fabricated author history or placeholder customer claims.
 
 web/ owns the reading website; studio/ owns the editorial schema. Public content is downloaded only at build time into ignored web/lib/generated/content.json. Never ship write, preview or deploy credentials in either browser bundle. API failures must fail the build, never replace content with an empty array. Drafts and future-dated posts are excluded; duplicate locale/slug combinations fail validation. Keep URL validation, React-escaped Portable Text, bounded descriptions and image-host checks.

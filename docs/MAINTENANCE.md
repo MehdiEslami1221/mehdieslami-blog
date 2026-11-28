@@ -2,6 +2,8 @@
 
 This guide describes the project as of 28 November 2026. It covers the deployed reading experience, the editorial workflow and the contracts that other parts of the website depend on. Read the current source before making a change; article content and service settings can change independently of this repository.
 
+Implementation reference: `93e9cde` (binary/editorial atmosphere and shared panel light). Start with [README.md](README.md) for topic guides and [OPERATIONS.fa.md](OPERATIONS.fa.md) for owner operations in Persian. The portfolio's independent [maintenance guide](https://github.com/MehdiEslami1221/MehdiEslami1221.github.io/blob/main/docs/MAINTENANCE.md) covers its time-chip countdown and meteor scene.
+
 ## Project boundaries
 
 | Item              | Location or purpose                                                                                       |
@@ -126,6 +128,12 @@ On a page visit, the portfolio fetches the snapshot once, validates it and rende
 | Header, footer and font registration | `web/components/shell.tsx`                                       |
 | Progress and sharing                 | `web/components/reading-tools.tsx`                               |
 | Visual styles and motion             | `web/app/globals.css`                                            |
+| Homepage decorative field            | `web/components/journal-background.tsx`                           |
+| Shared signal and panel light        | `web/components/journal-illumination.tsx`                         |
+| Public reaction/comment controls     | `web/components/reactions.tsx`, `web/components/comments.tsx`     |
+| Worker API and authentication        | `reactions/worker.mjs`, `reactions/registry.mjs`                   |
+| Moderator HTML and client script     | `reactions/admin-page.mjs`                                       |
+| D1 schema and migrations              | `reactions/schema.sql`, `scripts/deploy-reactions.mjs`            |
 | Shared paths and content types       | `web/lib/content.ts`                                             |
 | Validation, escaping and RSS         | `scripts/content-core.mjs`                                       |
 | CMS fetch and normalization          | `scripts/fetch-content.mjs`                                      |
@@ -133,6 +141,7 @@ On a page visit, the portfolio fetches the snapshot once, validates it and rende
 | Editor schema                        | `studio/schemaTypes/index.ts`                                    |
 | Site deployment                      | `.github/workflows/pages.yml`                                    |
 | Editor deployment                    | `.github/workflows/studio.yml`                                   |
+| Live API/markup checks               | `scripts/verify-reactions.mjs`                                   |
 
 ## Validation and deployment
 
@@ -150,7 +159,11 @@ git diff --check
 
 Use `npm ci` when dependencies are absent or changed. Website output is `web/out/`; Studio output is `studio/dist/`. Building Studio does not deploy it. Redeploy Studio after schema/configuration changes, not after ordinary article edits. Keep `package-lock.json` with intentional dependency updates.
 
-For layout changes, inspect Persian and English at 360px and 1280px. Check direct article URLs, the footer, copy success and clipboard-denied fallback, search/filter/empty states, reading progress and reduced motion. The last layout release passed the type checks, eight content/listing tests, both builds and browser checks in both languages. An empty-content export under a project base path was also checked before restoring production content.
+For layout changes, inspect Persian and English at 360px and 1280px. Check direct article URLs, the footer, copy success and clipboard-denied fallback, search/filter/empty states, reading progress and reduced motion. Check homepage signal/reflection alignment in RTL and LTR, nearby versus distant panels, scrolling, and filter/empty-state rerenders without duplicate overlays. Article pages must not mount the homepage light controller.
+
+The implementation baseline passed type checks, 32 tests, Studio and website builds, root/project-path export checks and browser checks in both languages. This is a record of that release, not a claim that every later documentation edit reruns those checks. Current acceptance comes from the checks relevant to the actual change, not a fixed test count. The suite includes content/list selection, real Worker/SQLite behavior, moderation authentication and six jsdom tests of the actual administrator client script. jsdom is test-only, not a website runtime dependency. Test comments/admin sessions belong in disposable local databases, never live demonstration conversations. For Markdown-only changes, review paths, links, contracts and `git diff --check`; no CMS content update or runtime rebuild is required locally.
+
+The website workflow runs on every push to `main`, so a documentation commit can still trigger its normal publication checks. The separate **Deploy Sanity Studio** workflow runs manually or on changes under `studio/**`, `package-lock.json` or its workflow file. Do not redeploy Studio just to publish an ordinary article. Website deployment uses an artifact name unique to run and attempt; preserve matching upload/deploy names when changing workflows.
 
 Temporary content can be supplied using `BLOG_CONTENT_FILE` for local QA. This is deliberately rejected under `GITHUB_ACTIONS`. Never commit generated CMS data, fixture posts or preview HTML into a release. `_empty` is a build-only fallback parameter for empty article collections; the finishing script removes its output directories. It is not an article.
 
@@ -169,14 +182,22 @@ Visitor accounts, a custom publishing dashboard and automatic translation are no
 
 Article likes/dislikes are implemented in the separate Worker/D1 service described in [REACTIONS.md](REACTIONS.md). The publishing workflow updates its article registry and exports the verified API URL to the static frontend build. Preserve shared translation totals, stable document IDs and neutral tombstones. Browser storage is an anonymous convenience identifier, not proof of a unique person. There is no continuous realtime polling.
 
-## November 27 update
+## Discussion data and owner access
 
-Anonymous discussions now share the existing Worker/D1 service. See [COMMENTS.md](COMMENTS.md) for request IDs, translation grouping, name persistence, rate limits, deletion and owner moderation. [SPACE.md](SPACE.md) records the homepage atmosphere and motion limits. The Pages verifier checks the discussion form as well as reactions. No new credentials or hosting subscription are needed.
+Public comments, one-level replies and reactions share `mehdieslami-blog-reactions`, the existing Cloudflare Worker/D1 service. The current dashboard is `https://mehdieslami-blog-reactions.p30lod.workers.dev/admin/`. It uses server-side authentication, eight-hour secure sessions and exact-origin/CSRF checks; it is not a static password gate. Keep private pending text out of public APIs, exported HTML and browser bundles. New and legacy comments without a moderation state default to pending. An approved reply also requires an approved, non-deleted root; rejecting/removing a root hides its thread. Administrator removal is recoverable moderation state; author deletion blanks the body permanently.
 
-## Moderation and flat sky
+`settings` retains the private registry/signing key and administrator verifier; `votes` and `rate_limits` retain reaction/write state. `comments` stores discussion records, `comment_moderation` stores review state, and `admin_sessions` stores hashed session identifiers with CSRF/expiry. Preserve these tables and the existing signing key across releases. Deployment hashes and uploads both Worker modules (`worker.mjs`, `admin-page.mjs`); updating only one would leave the public/API and moderator client inconsistent.
 
-The Worker now serves `/admin/` with server-side password authentication, secure sessions and CSRF protection. `comment_moderation` defaults all missing/new states to pending; approve before public root/reply reads. Deployment retains the administrator password and uses an encrypted delivery envelope only for first bootstrap. Read COMMENTS.md before changing authentication or visibility. The homepage combines CSS binary/editorial motion with gentle proximity lighting. Former Canvas, circuit and meteor renderers are removed. See SPACE.md.
+The dashboard inherits IRANSansX from the public journal font paths; keep the font CORS and CSP rules aligned. It locks controls during requests, refreshes stale CSRF state once after a changed session cookie, and distinguishes a saved decision from a failed list refresh. Parent approval is an explicit action, never an automatic side effect of approving a reply. Password rotation revokes all administrator sessions. Normal deployments retain the existing password; first-install bootstrap and controlled recovery are documented in [COMMENTS.md](COMMENTS.md). Do not print credentials, publish private delivery keys or reset D1 for access recovery.
 
-## Journal atmosphere and moderation reliability
+Cloudflare deployment uses the existing `CLOUDFLARE_ACCOUNT_ID` and `CLOUDFLARE_API_TOKEN` Actions secrets. Rotate the token in Cloudflare, update the same repository secret and verify publication before retiring the old token. Its expiry blocks later deployment but does not erase D1 or stop an already-deployed Worker. Sanity deployment and optional GitHub webhook credentials are separate. Free quotas are finite; preserve honest unavailable/rate-limit messages. See [REACTIONS.md](REACTIONS.md) and [COMMENTS.md](COMMENTS.md).
 
-The homepage uses `journal-background.tsx` for its layered binary/editorial field. `journal-illumination.tsx` moves one shared signal and updates React-owned `.journal-reflection` overlays, using cached viewport bounds and capped 24/18 Hz updates. Observers invalidate bounds when filtered cards/layout change; hidden tabs and reduced motion stop the light. It replaces the retired circuit/meteor controller in `space-background.tsx`. The moderation dashboard inherits IRANSansX, locks controls during pending requests, refreshes stale CSRF state once after a changed session cookie, and distinguishes a saved decision from a failed list refresh. See SPACE.md and COMMENTS.md for constraints and tests.
+## Accepted journal atmosphere
+
+The homepage uses `journal-background.tsx`: six masked binary streams, twelve small code fragments, three editorial outlines, two faint watermarks and eighteen data points, with a faint lime/teal wash. Smaller screens reduce density. CSS transform/opacity animations supply the base motion. `journal-illumination.tsx` moves one shared signal on a 48-second path and updates React-owned `.journal-reflection` overlays, using cached viewport bounds and capped 24 Hz desktop / 18 Hz mobile writes. The field's bounding rectangle converts local positions to viewport coordinates, including RTL scrollbars; resizing a mobile halo must not scale its translation.
+
+Keep the one-pixel rim/local fill faint and proximity-based. Observers invalidate bounds when filtered cards/layout change; the controller must not inject DOM children or observe its own style writes. Hidden tabs and reduced motion stop/clear the light. Print hides decoration. Articles retain their separate ambient layer and normal-flow share/footer layout. Former Canvas, black-hole, circuit and meteor backgrounds are retired in this repository. Do not restore them or replace the portfolio's independently maintained scene. See [SPACE.md](SPACE.md).
+
+## Safe update and rollback
+
+Start from the latest `main` and keep changes within the requested feature. Review source and lockfile changes, preserve public routes and the version-1 portfolio feed, and run the relevant checks above. Do not edit ignored CMS snapshots or `web/out/` as source. Static frontend rollback can use a reviewed revert and the normal publication workflow; a rebuild still reads current eligible Sanity content. A code revert does not rewind CMS documents, D1 votes/comments or private settings. Database migrations therefore need compatibility review before deployment rather than an assumption that reverting HTML undoes stored data. Keep account-setting observations separate from verified repository behavior.

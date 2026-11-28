@@ -4,6 +4,8 @@ A Persian / English software journal, with a Next.js static frontend on GitHub P
 
 [Live journal](https://blog.mehdieslami.ir/) · [English journal](https://blog.mehdieslami.ir/en/) · [Persian guide](README.fa.md) · [Maintenance guide](docs/MAINTENANCE.md) · [Publishing](docs/PUBLISHING.md)
 
+[Documentation index](docs/README.md) · [راهنمای انتشار و مدیریت](docs/OPERATIONS.fa.md)
+
 - **Sanity project:** `kaaepoyb`
 - **Dataset:** `production` (public, published articles only)
 - **Website:** `blog.mehdieslami.ir`
