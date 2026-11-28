@@ -72,7 +72,8 @@ export function Home({ lang }: { lang: Lang }) {
             <span>ANDROID</span>
           </div>
         </div>
-        <div className="notebook-art" aria-hidden="true">
+        <div className="notebook-art journal-lit-panel" aria-hidden="true">
+          <span className="journal-reflection" aria-hidden="true" />
           <div className="art-corner">ME / JOURNAL</div>
           <div className="orbit orbit-one" />
           <div className="orbit orbit-two" />
@@ -120,7 +121,8 @@ export function Home({ lang }: { lang: Lang }) {
           <Journal lang={lang} posts={posts} />
         </section>
         <aside className="journal-aside">
-          <div className="author-card">
+          <div className="author-card journal-lit-panel">
+            <span className="journal-reflection" aria-hidden="true" />
             <p className="eyebrow">
               {fa ? "نویسندهٔ این دفتر" : "BEHIND THE NOTES"}
             </p>
@@ -148,7 +150,8 @@ export function Home({ lang }: { lang: Lang }) {
               <Icon name="arrow" width="16" />
             </a>
           </div>
-          <div className="aside-note">
+          <div className="aside-note journal-lit-panel">
+            <span className="journal-reflection" aria-hidden="true" />
             <span className="note-mark">✳</span>
             <h3>
               {fa ? "برای خواندن، سر فرصت" : "For your next reading break"}

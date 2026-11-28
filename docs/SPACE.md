@@ -1,21 +1,23 @@
-# Journal background
+# Journal background and panel light
 
-`web/components/journal-background.tsx` owns the decorative layer on both journal homepages. The visual language combines software and writing: gently flowing 0/1 streams, small code fragments such as `<article>` and `write()`, and two thin outlines of editorial notes. The independent hero notebook remains unchanged.
+`web/components/journal-background.tsx` owns the decorative field on both homepages. Keep the software/writing identity: six soft 0/1 streams, twelve drifting code fragments, three editorial note outlines, two faint typographic watermarks and eighteen tiny data points. The independent hero notebook remains unchanged. This richer composition extends the existing direction rather than replacing it.
 
-## Rendering and motion
+## Base scene
 
-The layer is deterministic server-rendered markup with CSS-only motion. Four masked binary windows each contain two identical twelve-row chunks; the track translates by half its height for a seamless 38–50-second loop. Each row is 24px tall, so a chunk stays taller than the maximum 260px window. Negative delays make the scene active on first paint. Do not change row height, duplicate count or maximum window height independently.
+The field is deterministic server-rendered markup animated with CSS. Binary windows use two identical twelve-row chunks and translate by half the track height for seamless 38–54-second loops. Rows are 24px tall; each 288px chunk must stay taller than the maximum 260px window. Code fragments, note outlines and data points move slowly with staggered negative delays. The faint lime/teal wash remains behind the content. Mobile shows three streams, fewer fragments and two smaller notes.
 
-Six code fragments drift 28px over 24–39 seconds. Two note outlines float 24px over 28–34 seconds, with a small angle change. A faint lime/teal radial wash shifts slowly behind them. Only transform and opacity are animated; masks are static. There is no background JavaScript, Canvas, WebGL, timer, observer or layout measurement.
+Keep low contrast, explicit LTR for code, clipped viewport bounds, pointer-events off, user-select off and aria-hidden decoration. Only transform and opacity animate in the base field. There is no Canvas, WebGL or runtime animation library. The homepages hide the older ambient layer; article pages retain their existing treatment. Reduced motion stops animations; print hides decoration.
 
-Binary windows are 16% opaque on desktop and 12% on mobile. Code and notes use 10–14% opacity. Mobile hides two binary windows and two fragments and reduces note size/opacity. Keep the scene legible but subordinate to the article titles; do not add neon flashes, fast falling digits or bright overlays. The entire layer is clipped, noninteractive, unselectable, explicitly LTR and hidden from assistive technology. It must not create horizontal scrolling in either page language.
+## One shared light
 
-The homepages hide the older ambient layer to avoid stacking backgrounds. Article pages retain their existing treatment. Reduced motion stops all background animations. Print hides the decoration.
+`journal-illumination.tsx` is the only client controller for this effect. A small `01` signal follows a smooth 48-second figure-eight path in physical viewport coordinates. Its radial halo and all panel reflections use the same source position, independent of page text direction. The fixed field's actual bounding rectangle converts local drawing coordinates to viewport coordinates, including left-side RTL scrollbars. Narrow screens resize the halo around its center without scaling its translation coordinates.
 
-## Retired effects
+The notebook, post cards, author/RSS panels and empty state own a noninteractive `.journal-reflection` span in React markup. `.journal-lit-panel` establishes its local positioning. The controller must never inject nodes, wrap content or modify React child order. The overlay supplies a faint local fill and a masked one-pixel rim; distant panels stay unlit. Reflection opacity uses squared distance falloff and is lower on mobile. Do not illuminate all cards uniformly.
 
-The former stars-only background was replaced by the binary/editorial design. Do not restore circuit paths, light packets, meteors, card reflections or a central black-hole disk/ring. Do not inject overlays into cards or add a runtime animation library.
+The controller caches parent rectangles and measures only after invalidation by scroll, resize, image load, a main-area ResizeObserver or scoped child-list MutationObserver. Filter/search rerenders are re-registered on the next drawing update, including empty states. Attribute changes from lighting do not trigger the observer. Offscreen panels receive no gradient updates. One requestAnimationFrame loop caps drawing writes to 24 Hz on desktop and 18 Hz on mobile. Hidden tabs and reduced motion cancel the loop and clear the light. Cleanup disconnects observers/listeners and clears reflections.
 
-## Checks
+## Boundaries and checks
 
-Inspect Persian and English at desktop and 360px widths. Confirm binary digits flow seamlessly, code and notes move gently, the normal content stays readable/clickable, reduced motion stops animation and the old star/sky/meteor/reflection DOM is absent. Keep the notebook, fonts, navigation, article layout, public URLs, moderation behavior and portfolio repository intact.
+Do not restore circuit paths, meteors, a black-hole disk, fast falling digits or neon flashes. The owner authorized gentle panel reflections for this design; older instructions banning every card reflection are superseded by this implementation. Keep moderation, content, fonts, URLs and the separate portfolio repository intact.
+
+Inspect both languages at desktop and 360px. Check binary loops, source/reflection alignment, bright nearby versus dark distant panels, scrolling and search/filter rerenders without duplicate overlays, clickable cards, no horizontal overflow, and reduced motion. Confirm article pages do not mount the homepage controller.

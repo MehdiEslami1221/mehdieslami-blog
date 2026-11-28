@@ -104,10 +104,11 @@ export function Journal({ posts, lang }: { posts: Post[]; lang: Lang }) {
         <div className="posts-grid">
           {results.map((post, i) => (
             <Link
-              className={`post-card ${i === 0 && !query && category === "all" ? "featured-card" : ""}`}
+              className={`post-card journal-lit-panel ${i === 0 && !query && category === "all" ? "featured-card" : ""}`}
               href={articlePath(post)}
               key={post._id}
             >
+              <span className="journal-reflection" aria-hidden="true" />
               {post.cover ? (
                 <div className="post-cover">
                   <img
@@ -171,7 +172,8 @@ export function Journal({ posts, lang }: { posts: Post[]; lang: Lang }) {
           ))}
         </div>
       ) : (
-        <div className="empty-journal">
+        <div className="empty-journal journal-lit-panel">
+          <span className="journal-reflection" aria-hidden="true" />
           <div className="empty-icon">
             <Icon name="book" width="32" height="32" />
           </div>

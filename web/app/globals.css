@@ -1735,7 +1735,7 @@ body:has(.journal-atmosphere) > .ambient { display: none; }
   height: clamp(170px, 28vh, 260px);
   translate: -50% 0;
   transform: rotate(-14deg);
-  opacity: .16;
+  opacity: .19;
   mask-image: linear-gradient(transparent, #000 20%, #000 75%, transparent);
   overflow: hidden;
 }
@@ -1757,7 +1757,7 @@ body:has(.journal-atmosphere) > .ambient { display: none; }
   white-space: nowrap;
   font-size: 13px;
   letter-spacing: .03em;
-  opacity: .14;
+  opacity: .16;
   translate: -50% -50%;
   animation: journal-code-float var(--float-duration) ease-in-out var(--float-delay) infinite alternate;
 }
@@ -1766,7 +1766,7 @@ body:has(.journal-atmosphere) > .ambient { display: none; }
   width: 148px;
   border: 1px solid currentColor;
   border-radius: 12px;
-  opacity: .12;
+  opacity: .14;
   transform: rotate(-9deg);
   animation: journal-note-float 28s ease-in-out -9s infinite alternate;
 }
@@ -1807,17 +1807,96 @@ body:has(.journal-atmosphere) > .ambient { display: none; }
   from { transform: translate3d(-1%, 0, 0); opacity: .6; }
   to { transform: translate3d(2%, -2%, 0); opacity: 1; }
 }
+/* Depth remains decorative; one moving signal supplies the matching panel light. */
+.journal-watermark {
+  position: absolute;
+  font-size: clamp(110px, 16vw, 220px);
+  line-height: 1;
+  letter-spacing: -.12em;
+  opacity: .025;
+  rotate: -12deg;
+}
+.watermark-one { left: 44%; top: 34%; }
+.watermark-two { left: 10%; top: 77%; font-size: clamp(90px, 12vw, 170px); }
+.ghost-note-three { left: 46%; top: 80%; width: 118px; opacity: .1; animation-delay: -17s; }
+.journal-data-points { position: absolute; inset: 0; }
+.journal-data-points > i {
+  position: absolute;
+  width: 2px; height: 2px;
+  border-radius: 50%;
+  background: #cce4b3;
+  animation: journal-data-breathe 13s ease-in-out var(--point-delay) infinite alternate;
+}
+@keyframes journal-data-breathe {
+  from { opacity: .08; transform: translate3d(-4px, 6px, 0); }
+  to { opacity: .3; transform: translate3d(5px, -8px, 0); }
+}
+.journal-light-source {
+  position: absolute;
+  top: 0; left: 0;
+  width: 300px; height: 300px;
+  margin: -150px 0 0 -150px;
+  border-radius: 50%;
+  opacity: 0;
+  background: radial-gradient(circle, #c7ff8214 0%, #96cd6909 30%, transparent 68%);
+  will-change: transform;
+  transition: opacity .5s;
+}
+.journal-light-source > span {
+  position: absolute;
+  top: 139px; left: 139px;
+  width: 22px; height: 22px;
+  display: grid; place-items: center;
+  font: 9px/1 monospace;
+  border: 1px solid #cfff9433;
+  border-radius: 50%;
+  color: #d2f8a578;
+}
+.journal-light-source > i {
+  position: absolute;
+  inset: 117px;
+  border: 1px dashed #cfff941c;
+  border-radius: 50%;
+  animation: journal-signal-orbit 24s linear infinite;
+}
+@keyframes journal-signal-orbit { to { transform: rotate(360deg); } }
+.journal-lit-panel { position: relative; isolation: isolate; }
+.journal-reflection {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(280px circle at var(--reflection-x) var(--reflection-y), #c7ff8426, transparent 80%);
+  transition: opacity .25s linear;
+}
+.journal-reflection::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  background: radial-gradient(260px circle at var(--reflection-x) var(--reflection-y), #deffaba6, transparent 80%);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+}
 @media (max-width: 700px) {
   .binary-window { opacity: .12; width: 88px; }
   .binary-chunk > span { font-size: 11px; letter-spacing: 6px; }
-  .binary-window-1, .binary-window-2 { display: none; }
+  .binary-window-1, .binary-window-2, .binary-window-4 { display: none; }
   .journal-code { font-size: 11px; opacity: .1; }
-  .journal-code:nth-of-type(5), .journal-code:nth-of-type(6) { display: none; }
+  .journal-code:nth-of-type(3n) { display: none; }
   .journal-ghost-note { width: 110px; opacity: .08; }
   .ghost-note-one { left: -24px; top: 72%; }
   .ghost-note-two { right: -22px; top: 27%; }
+  .ghost-note-three, .watermark-two { display: none; }
+  .journal-light-source { width: 220px; height: 220px; margin: -110px 0 0 -110px; }
+  .journal-light-source > span { top: 99px; left: 99px; }
+  .journal-light-source > i { inset: 77px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .journal-atmosphere * { animation: none !important; }
+  .journal-light-source, .journal-reflection { display: none; }
 }
-@media print { .journal-atmosphere { display: none; } }
+@media print { .journal-atmosphere, .journal-reflection { display: none; } }
