@@ -1,21 +1,19 @@
 # Journal background
 
-`web/components/space-background.tsx` owns the decorative background on the two journal homepages. It follows the portfolio's dark circuit/star identity: a full-viewport field, chamfered circuit traces, five slow signal packets, small code labels and occasional shooting stars. The notebook illustration remains independent. The retired black-hole disk/ring component must not be restored as the homepage background.
+`web/components/journal-background.tsx` renders the decorative background on both journal homepages. The current direction is deliberately quiet: tiny drifting stars with faint book, page, pen, quotation, bookmark and RSS outlines. The independent notebook illustration remains unchanged.
 
-## Rendering budget
+## Rendering and motion
 
-The base scene is a deterministic SVG: 52 small stars, 21 circuit nodes and 20 paths. Only the star group's opacity and five dashed signal paths have continuous CSS motion. There is no Canvas, WebGL, 3D projection, particle field or frame-by-frame gradient generation.
+The background is static server-rendered markup: three groups of fourteen stars, plus six small inline SVG motifs. All positions are deterministic and independent of page language. CSS animates only transform and opacity: star groups drift about twenty pixels over 64–92 seconds; motifs float twelve pixels over 32–47 seconds. There is no background JavaScript, Canvas, WebGL, random spawning, timer, observer or layout measurement.
 
-JavaScript schedules one 2.7-second meteor at a time, first after 4.5 seconds, with a 16–24-second gap thereafter. Only the active meteor uses requestAnimationFrame, capped to 24 drawing updates per second on narrow screens and 30 elsewhere. Between meteors there is no JavaScript frame loop. A single positioned HTML element supplies the tail/head. Its geometry uses physical screen coordinates in both text directions.
+Stars are one or two pixels, with low opacity. Motifs use thin strokes and 11% opacity on desktop, reduced to 7.5% on mobile, where two motifs are hidden. Decoration must remain behind the content, noninteractive, clipped to the viewport and hidden from assistive technology. It must not create horizontal overflow or interfere with search, links, selection or reading.
 
-## Panel reflections
+The homepage hides the older ambient layer so the dot grid and animated green wash do not stack with the new scene. Article pages retain their existing ambient treatment. System reduced motion makes the new background static; print hides it entirely.
 
-Homepage post cards, the notebook, author panel and RSS aside receive a noninteractive local `.space-reflection` overlay. A scoped child-list observer registers cards after search/filter rerenders and removes disconnected entries. Each panel has one overlay. Never put an overlay on a form control, cover it with a hit target, or move the card's content into an extra wrapper.
+## Retired effects
 
-Panel bounds are measured at most ten times per second **only during a meteor**. Nearby panels receive a local lime fill and masked rim; distant cards stay dark. The same head coordinates drive the visible meteor and reflection. Do not light every panel uniformly or read layout on every display frame.
-
-Hidden tabs, resize and OS reduced motion cancel the scheduled meteor, active frame and reflected light. Returning restarts a bounded delay. Reduced motion retains a static SVG and print hides all decoration. Cleanup removes timers, frame callbacks, observers, classes and overlays. Keep the scene clipped to the viewport so it cannot create horizontal overflow at 360px.
+The owner requested removal of the former background. Do not restore circuit traces, light packets, meteors, card reflections or a central black-hole disk/ring. The old client controller and its reflection CSS were deleted; do not reintroduce a runtime animation library or inject overlays into cards.
 
 ## Checks
 
-Build and inspect Persian and English homepages at desktop and 360px widths. Check that the old central ring/disk and Canvas are absent, cards remain readable, filters can replace cards without duplicate overlays, the meteor and nearby reflections agree, reduced motion stops movement, and article pages do not load this homepage controller. Preserve the original fonts, notebook, header, article layout, canonical URLs and portfolio source.
+Inspect Persian and English homepages at desktop and 360px widths. Confirm stars and writing motifs are subtle, CSS animations are active in normal motion, reduced motion stops them, and the old sky/meteor/reflection DOM is absent. Keep content, the notebook, fonts, navigation, article layouts, canonical URLs and the separate portfolio source intact.

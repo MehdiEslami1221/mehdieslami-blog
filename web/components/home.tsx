@@ -1,4 +1,4 @@
-import { SpaceBackground } from "./space-background";
+import { JournalBackground } from "./journal-background";
 import {
   listedPosts,
   asset,
@@ -27,7 +27,7 @@ export function Home({ lang }: { lang: Lang }) {
   };
   return (
     <>
-      <SpaceBackground />
+      <JournalBackground />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

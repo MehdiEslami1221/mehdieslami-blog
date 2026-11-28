@@ -1708,18 +1708,65 @@ html[dir="rtl"] .reading-progress > div {
   }
 }
 
-/* Portfolio-inspired circuit field. Static SVG plus five slow light packets. */
-.journal-sky { position: fixed; inset: 0; overflow: hidden; z-index: -1; pointer-events: none; background: radial-gradient(ellipse at 15% 35%,#8bc07909,transparent 55%),radial-gradient(ellipse at 85% 65%,#5dbbb008,transparent 55%); }
-.journal-sky > svg { width: 100%; height: 100%; display: block; }
-.sky-packets { animation: journal-packets 23s linear infinite; }
-.sky-stars { animation: journal-stars 9s ease-in-out infinite alternate; }
-@keyframes journal-packets { to { stroke-dashoffset: -805; } }
-@keyframes journal-stars { from { opacity: .55; } to { opacity: .95; } }
-.journal-meteor { position: absolute; top: 0; left: 0; height: 1.5px; width: 170px; opacity: 0; transform-origin: right center; margin-left: -170px; background: linear-gradient(90deg,transparent,#bdf66a77 75%,#e2ffc9); box-shadow: 0 0 9px #bdf66a55; border-radius: 100%; }
-.journal-meteor::after { content: ""; position: absolute; right: 0; top: -1px; width: 4px; height: 4px; border-radius: 50%; background: #e6ffda; }
-.space-reactive { position: relative; isolation: isolate; }
-.space-reflection { position: absolute; inset: 0; z-index: 2; pointer-events: none; border-radius: inherit; opacity: 0; overflow: hidden; background: radial-gradient(300px circle at var(--space-x) var(--space-y),#bdf66a25,transparent 78%); }
-.space-reflection::after { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px; background: radial-gradient(300px circle at var(--space-x) var(--space-y),#d9ffb5d9,transparent 78%); mask: linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0); mask-composite: exclude; }
-@media(max-width: 700px) { .journal-meteor { margin-left: -100px; } }
-@media(prefers-reduced-motion: reduce) { .journal-sky * { animation: none !important; } .journal-meteor,.space-reflection { display: none; } }
-@media print { .journal-sky,.space-reflection { display: none; } }
+/* Quiet journal atmosphere: sparse stars and writing motifs, CSS motion only. */
+body:has(.journal-atmosphere) > .ambient {
+  display: none;
+}
+.journal-atmosphere {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: -1;
+  background: radial-gradient(ellipse at 15% 30%, #bdf66a04, transparent 65%);
+}
+.journal-starfield {
+  position: absolute;
+  inset: -20px;
+  animation: journal-star-drift 64s ease-in-out infinite alternate;
+}
+.starfield-1 {
+  animation-duration: 78s;
+  animation-delay: -25s;
+  animation-direction: alternate-reverse;
+}
+.starfield-2 {
+  animation-duration: 92s;
+  animation-delay: -50s;
+}
+.journal-star {
+  position: absolute;
+  border-radius: 50%;
+  background: #dce6d4;
+}
+.journal-motif {
+  position: absolute;
+  display: block;
+  translate: -50% -50%;
+  color: #b9cba9;
+  opacity: .11;
+  animation: journal-motif-float var(--motif-duration) ease-in-out var(--motif-delay) infinite alternate;
+}
+.journal-motif > svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+@keyframes journal-star-drift {
+  from { transform: translate3d(-4px, 8px, 0); opacity: .65; }
+  to { transform: translate3d(6px, -12px, 0); opacity: 1; }
+}
+@keyframes journal-motif-float {
+  from { transform: translate3d(0, 5px, 0) rotate(-4deg); }
+  to { transform: translate3d(3px, -7px, 0) rotate(3deg); }
+}
+@media (max-width: 700px) {
+  .journal-motif { opacity: .075; }
+  .journal-motif:nth-last-child(-n + 2) { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .journal-atmosphere * { animation: none !important; }
+}
+@media print {
+  .journal-atmosphere { display: none; }
+}

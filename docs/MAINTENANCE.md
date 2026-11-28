@@ -79,7 +79,7 @@ The date field is not a paid CMS scheduling feature. Drafts are never included. 
 - Preserve RTL/LTR layout and the Persian font on Persian text even within the English interface, including the language switch and language badges.
 - `home.tsx` renders the notebook illustration as HTML and SVG. `globals.css` animates its rings, orbiting points, code tiles and book using transforms and opacity. It is not a raster image that needs regeneration.
 - The page ambience uses a fixed decorative layer behind the content. Keep its contrast low, pointer events off and text readable.
-- Preserve the `prefers-reduced-motion` override and print rules. The notebook uses CSS only. The separate homepage sky uses SVG circuits/stars, occasional meteors and local card reflections; see SPACE.md.
+- Preserve the `prefers-reduced-motion` override and print rules. The notebook uses CSS only. The separate homepage background uses faint stars and writing motifs with CSS-only motion; see SPACE.md.
 - `ReadingTools` owns the scroll progress indicator. `ArticleShare` owns clipboard interaction and its inline status. Both live in `web/components/reading-tools.tsx`.
 - The copy-link button belongs inside `.article-actions` at the end of the article, beside the return link. It must not be fixed over the site footer. If clipboard permission is unavailable, display the URL in the same area without overflow.
 - Reading time is an estimate derived from article text, not a recorded visitor statistic. The table of contents is generated from h2/h3 blocks.
@@ -175,8 +175,8 @@ Anonymous discussions now share the existing Worker/D1 service. See [COMMENTS.md
 
 ## Moderation and flat sky
 
-The Worker now serves `/admin/` with server-side password authentication, secure sessions and CSRF protection. `comment_moderation` defaults all missing/new states to pending; approve before public root/reply reads. Deployment retains the administrator password and uses an encrypted delivery envelope only for first bootstrap. Read COMMENTS.md before changing authentication or visibility. The homepage sky uses SVG circuits/stars and CSS motion. The former Canvas renderer is removed; JavaScript frames run only during an occasional short meteor. See SPACE.md.
+The Worker now serves `/admin/` with server-side password authentication, secure sessions and CSRF protection. `comment_moderation` defaults all missing/new states to pending; approve before public root/reply reads. Deployment retains the administrator password and uses an encrypted delivery envelope only for first bootstrap. Read COMMENTS.md before changing authentication or visibility. The homepage background uses faint stars and writing motifs with CSS-only motion. Former Canvas, circuit, meteor and reflection renderers are removed. See SPACE.md.
 
 ## Journal atmosphere and moderation reliability
 
-The homepage now follows the portfolio's circuit/star field with bounded SVG signals, an occasional short meteor and local card reflections. `space-background.tsx` replaces the retired `black-hole.tsx`. Only an active meteor has a capped JavaScript frame loop. The moderation dashboard inherits IRANSansX, locks controls during pending requests, refreshes stale CSRF state once after a changed session cookie, and distinguishes a saved decision from a failed list refresh. See SPACE.md and COMMENTS.md for constraints and tests.
+The homepage uses `journal-background.tsx`: sparse stars and writing motifs with CSS-only motion. It replaces the retired circuit/meteor/reflection controller in `space-background.tsx`. There are no timers, DOM observers, card overlays or animation frame callbacks. The moderation dashboard inherits IRANSansX, locks controls during pending requests, refreshes stale CSRF state once after a changed session cookie, and distinguishes a saved decision from a failed list refresh. See SPACE.md and COMMENTS.md for constraints and tests.
